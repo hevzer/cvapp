@@ -8,7 +8,7 @@ This file, `AGENTS.md`, serves as a permanent architectural and historical recor
 Because it operates entirely without a backend API, all state is handled natively through Zustand localStorage persistence, and all PDF generation relies purely on the browser's native `window.print()` engine scaling through CSS `@media print` utilities.
 
 ## Technology Stack
-- **Framework**: Next.js (App Router pattern) + `vinext` for high-performance builds
+- **Framework**: Next.js 16 (App Router pattern) + `vinext` for high-performance builds
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4 (with dark mode and print variant support)
 - **State Management**: Zustand (with Persist middleware)
@@ -23,19 +23,39 @@ Because it operates entirely without a backend API, all state is handled nativel
 
 2. **Template Architectures**:
    - `ATSMinimalist`: Strict vertical semantic HTML flow. ATS-compliant and explicitly unstyled for maximal parseability.
-   - `ModernCreative` & `TimelineCreative`: Two-column flex layouts designed for visual flair.
-   - *Note*: Ensure that extensive padding/margins are not introduced in generic elements, as this immediately causes A4 print overflows.
+   - `ModernCreative`: Two-column flex layout designed for visual flair with color accents.
+   - `TimelineCreative`: Two-column layout with vertical timeline dots in the left column and a right sidebar for skills/languages.
+   - `TimelineTwoColumn`: Dark sidebar (left) with contact/skills, main content (right) with timeline.
+   - **A4 Print Fitting**: Templates use `max-h-[297mm] overflow-hidden` on the root container to guarantee single-page PDF output. All spacing and typography are set to compact values that natively fit A4 dimensions — **do not use `print:` overrides for sizing**, as this creates Chromium flexbox bugs. Design for A4 on screen; the print output will match.
 
 3. **Internationalization (i18n)**:
-   - Translation data is stored natively inside `src/data/i18n.ts`. 
+   - Translation data is stored natively inside `src/lib/i18n.ts`. 
    - Language switching handles standard boilerplate headings. 
    - *Crash Warning*: We actively removed defunct languages (`it`, `de`, `es`). Future agents modifying the `cvLanguage` state variable in Zustand must implement a valid fallback check (found in `ResumeBuilder.tsx`) to prevent fatal application crashes when migrating user caches between versions.
 
 4. **Branding Assets**:
    - Integrated a customized, natively cropped MacOS style "squircle" logo for use throughout the standard viewport and PWA configurations.
 
+5. **Text Scale Control**:
+   - A `textScale` number (0.8–1.2) is stored in the Zustand store and persisted to localStorage.
+   - The `TextScaleSlider` component renders a range input in the sidebar.
+   - Scaling is applied via CSS `zoom` on the `#cv-preview` container (not `font-size: em`, which doesn't cascade to children with hardcoded `px` values).
+
+6. **GitHub Integration**:
+   - Personal info forms support a GitHub profile URL field.
+   - Templates that display contact info render a GitHub icon/link when provided.
+
+## Zustand Store Shape (`useResumeStore`)
+Key state fields:
+- `resumeData` — all CV content (personalInfo, experience, education, skills, languages, hiddenKeywords, cvLanguage)
+- `activeTemplate` — `'ats' | 'modern' | 'timeline' | 'timelineTwoColumn'`
+- `darkMode` — boolean
+- `textScale` — number (default `1`, range `0.8`–`1.2`)
+
 ## Maintenance Commands
 ```bash
-bun run dev  # Start vinext development server
-bun update   # Increment safe dependency versions
+bun run dev    # Start vinext development server
+bun run build  # Production build
+bun run start  # Start production server
+bun update     # Increment safe dependency versions
 ```
