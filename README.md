@@ -4,6 +4,7 @@ A fast, privacy-first resume and CV builder. All data processing and PDF generat
 
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Built with](https://img.shields.io/badge/built_with-React_19_%2B_Vite_8-61dafb)
+![Vinext](https://img.shields.io/badge/built%20with-vinext-orange)
 
 ---
 
