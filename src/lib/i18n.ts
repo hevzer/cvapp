@@ -1,0 +1,45 @@
+export type LanguageCode = 'en' | 'fr';
+
+export const languageOptions: { code: LanguageCode; label: string }[] = [
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+];
+
+type Dictionary = {
+  [key in LanguageCode]: {
+    profile: string;
+    experience: string;
+    education: string;
+    contact: string;
+    technicalSkills: string;
+    softSkills: string;
+    languages: string;
+    drivingLicense: string;
+    present: string;
+  };
+};
+
+export const i18n: Dictionary = {
+  en: {
+    profile: 'Profile',
+    experience: 'Experience',
+    education: 'Education',
+    contact: 'Contact',
+    technicalSkills: 'Technical Skills',
+    softSkills: 'Soft Skills',
+    languages: 'Languages',
+    drivingLicense: 'Driving License',
+    present: 'Present',
+  },
+  fr: {
+    profile: 'Profil',
+    experience: 'Expérience',
+    education: 'Éducation',
+    contact: 'Contact',
+    technicalSkills: 'Compétences Techniques',
+    softSkills: 'Savoir-être',
+    languages: 'Langues',
+    drivingLicense: 'Permis de Conduire',
+    present: 'Présent',
+  },
+};

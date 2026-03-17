@@ -1,0 +1,22 @@
+{
+  "name": "CVapp — Professional CV Builder",
+  "short_name": "CVapp",
+  "description": "Create, preview, and download professional CVs with ATS-friendly and modern templates. Free, fast, and privacy-first — all data stays in your browser.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
