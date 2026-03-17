@@ -75,6 +75,23 @@ export default function AboutModal() {
                   </li>
                 ))}
               </ul>
+
+              <div className="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-xs tracking-widest font-bold uppercase text-gray-400 dark:text-gray-500 mb-2">
+                  License
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Licensed under the{' '}
+                  <a
+                    href="https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                  >
+                    GNU General Public License v3.0
+                  </a>
+                </p>
+              </div>
             </div>
             
             <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end">
