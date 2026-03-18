@@ -1,7 +1,7 @@
 'use client';
 
 import { useResumeStore } from '@/store/useResumeStore';
-import { i18n, LanguageCode } from '@/lib/i18n';
+import { i18n, getSafeLanguage } from '@/lib/i18n';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function formatDate(date: string) {
@@ -12,18 +12,18 @@ function formatDate(date: string) {
 }
 
 export default function ModernCreative() {
-  const {
-    personalInfo,
-    summary,
-    experience,
-    education,
-    technicalSkills,
-    softSkills,
-    languages,
-    hiddenKeywords,
-    cvLanguage,
-  } = useResumeStore((s) => s.resumeData);
-  const lang = (i18n[cvLanguage as LanguageCode] ? cvLanguage : 'en') as LanguageCode;
+  const resume = useResumeStore((s) => s.resumeData);
+  const personalInfo = resume.personalInfo || ({} as any);
+  const summary = resume.summary || '';
+  const experience = resume.experience || [];
+  const education = resume.education || [];
+  const technicalSkills = resume.technicalSkills || [];
+  const softSkills = resume.softSkills || [];
+  const languages = resume.languages || [];
+  const hiddenKeywords = resume.hiddenKeywords || [];
+  const cvLanguage = resume.cvLanguage;
+  
+  const lang = getSafeLanguage(cvLanguage);
 
   const hasContent =
     personalInfo.fullName ||
@@ -47,9 +47,9 @@ export default function ModernCreative() {
   }
 
   return (
-    <div className="bg-white text-gray-900 max-w-[210mm] mx-auto font-['Inter',sans-serif] text-[13px] leading-relaxed min-h-[297mm] flex">
+    <div className="bg-white text-gray-900 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] flex">
       {/* Left Sidebar */}
-      <div className="w-[35%] bg-slate-800 text-white p-6 flex flex-col">
+      <div className="w-[35%] text-white p-6 flex flex-col" style={{ backgroundColor: 'var(--sidebar, #1e293b)' }}>
         {/* Photo */}
         {personalInfo.photoUrl && (
           <div className="flex justify-center mb-5">
@@ -133,9 +133,9 @@ export default function ModernCreative() {
               {technicalSkills.map((skill, i) => (
                 <span
                   key={i}
-                  className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
+                  className="px-2 py-0.5 bg-slate-700 text-slate-200 text-[10px] rounded font-medium"
                 >
-                  {skill}
+                  {typeof skill === 'string' ? skill : (skill as any).name}
                 </span>
               ))}
             </div>
@@ -148,16 +148,14 @@ export default function ModernCreative() {
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].softSkills}
             </h2>
-            <div className="flex flex-wrap gap-1.5">
+            <ul className="space-y-1.5">
               {softSkills.map((skill, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
-                >
-                  {skill}
-                </span>
+                <li key={i} className="text-xs text-slate-300 flex items-center gap-2">
+                  <i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i>
+                  {typeof skill === 'string' ? skill : (skill as any).name}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         )}
 
@@ -168,12 +166,12 @@ export default function ModernCreative() {
               {i18n[lang].languages}
             </h2>
             <div className="flex flex-wrap gap-1.5">
-              {languages.map((skill, i) => (
+              {languages.map((l, i) => (
                 <span
                   key={i}
                   className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
                 >
-                  {skill}
+                  {typeof l === 'string' ? l : `${(l as any).name}${ (l as any).level ? ` (${(l as any).level})` : '' }`}
                 </span>
               ))}
             </div>
@@ -186,7 +184,7 @@ export default function ModernCreative() {
         {/* Objective */}
         {personalInfo.objective && (
           <div className="mb-6">
-            <p className="text-slate-600 font-medium italic text-sm leading-relaxed border-l-4 border-indigo-500 pl-4 py-1">
+            <p className="text-slate-600 font-medium italic text-sm leading-relaxed pl-4 py-1" style={{ borderLeft: '4px solid var(--accent, #6366f1)' }}>
               "{personalInfo.objective}"
             </p>
           </div>
@@ -194,7 +192,7 @@ export default function ModernCreative() {
         {/* Summary */}
         {summary && (
           <div className="mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 border-b-2 border-slate-800 pb-1.5 mb-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].profile}
             </h2>
             <p className="text-gray-700 leading-relaxed">{summary}</p>
@@ -204,7 +202,7 @@ export default function ModernCreative() {
         {/* Experience */}
         {experience.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 border-b-2 border-slate-800 pb-1.5 mb-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].experience}
             </h2>
             <div className="space-y-5">

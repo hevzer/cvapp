@@ -1,7 +1,7 @@
 'use client';
 
 import { useResumeStore } from '@/store/useResumeStore';
-import { i18n, LanguageCode } from '@/lib/i18n';
+import { i18n, getSafeLanguage } from '@/lib/i18n';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function formatDate(date: string) {
@@ -12,18 +12,18 @@ function formatDate(date: string) {
 }
 
 export default function TimelineCreative() {
-  const {
-    personalInfo,
-    summary,
-    experience,
-    education,
-    technicalSkills,
-    softSkills,
-    languages,
-    hiddenKeywords,
-    cvLanguage,
-  } = useResumeStore((s) => s.resumeData);
-  const lang = (i18n[cvLanguage as LanguageCode] ? cvLanguage : 'en') as LanguageCode;
+  const resume = useResumeStore((s) => s.resumeData);
+  const personalInfo = resume.personalInfo || ({} as any);
+  const summary = resume.summary || '';
+  const experience = resume.experience || [];
+  const education = resume.education || [];
+  const technicalSkills = resume.technicalSkills || [];
+  const softSkills = resume.softSkills || [];
+  const languages = resume.languages || [];
+  const hiddenKeywords = resume.hiddenKeywords || [];
+  const cvLanguage = resume.cvLanguage;
+
+  const lang = getSafeLanguage(cvLanguage);
 
   const hasContent =
     personalInfo.fullName ||
@@ -47,7 +47,7 @@ export default function TimelineCreative() {
   }
 
   return (
-    <div className="bg-slate-50 text-slate-900 w-full max-w-[210mm] mx-auto font-['Inter',sans-serif] text-[11.5px] leading-[1.5] min-h-[297mm] max-h-[297mm] overflow-hidden print:w-[210mm] print:-m-4">
+    <div className="bg-slate-50 text-slate-900 w-full max-w-[210mm] mx-auto text-[11.5px] leading-[1.5] min-h-[297mm] max-h-[297mm] overflow-hidden print:w-[210mm] print:-m-4">
       {/* Header Section */}
       <header className="bg-white px-6 py-4 border-b border-slate-200">
         <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ export default function TimelineCreative() {
               </h1>
             )}
             {personalInfo.title && (
-              <p className="text-sm text-indigo-600 font-semibold mt-0.5">
+              <p className="text-sm font-semibold mt-0.5" style={{ color: 'var(--accent, #6366f1)' }}>
                 {personalInfo.title}
               </p>
             )}
@@ -125,7 +125,7 @@ export default function TimelineCreative() {
           {summary && (
             <div className="mb-5">
               <h2 className="text-[11.5px] font-bold text-slate-900 uppercase tracking-widest mb-2.5 flex items-center gap-2">
-                <i className="bi bi-person-lines-fill text-indigo-500"></i>
+                <i className="bi bi-person-lines-fill" style={{ color: 'var(--accent, #6366f1)' }}></i>
                 {i18n[lang].profile}
               </h2>
               <p className="text-slate-700 leading-[1.5] text-[11px] bg-white p-3 rounded-xl border border-slate-100 shadow-sm shadow-slate-200/50">
@@ -137,19 +137,19 @@ export default function TimelineCreative() {
           {experience.length > 0 && (
             <div className="mb-5">
               <h2 className="text-[11.5px] font-bold text-slate-900 uppercase tracking-widest mb-2.5 flex items-center gap-2">
-                <i className="bi bi-briefcase-fill text-indigo-500"></i>
+                <i className="bi bi-briefcase-fill" style={{ color: 'var(--accent, #6366f1)' }}></i>
                 {i18n[lang].experience}
               </h2>
-              <div className="relative border-l-2 border-indigo-100 ml-2.5 space-y-4">
+              <div className="relative ml-2.5 space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #e0e7ff)' }}>
                 {experience.map((exp, i) => (
                   <div key={exp.id} className="relative pl-5">
                     {/* Timeline Dot */}
-                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-slate-50"></div>
+                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
                     
                     <div className="mb-1">
                       <h3 className="text-[12px] font-bold text-slate-900">{exp.position}</h3>
                       <div className="flex justify-between items-center mt-0.5">
-                        <span className="text-indigo-600 font-semibold text-[11px]">{exp.company}</span>
+                        <span className="font-semibold text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{exp.company}</span>
                         <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
                           {formatDate(exp.startDate)}
                           {(exp.startDate || exp.endDate || exp.current) && ' - '}
@@ -169,20 +169,20 @@ export default function TimelineCreative() {
           {education.length > 0 && (
             <div>
               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-widest mb-2.5 flex items-center gap-2">
-                <i className="bi bi-mortarboard-fill text-indigo-500"></i>
+                <i className="bi bi-mortarboard-fill" style={{ color: 'var(--accent, #6366f1)' }}></i>
                 {i18n[lang].education}
               </h2>
-              <div className="relative border-l-2 border-indigo-100 ml-2.5 space-y-4">
+              <div className="relative ml-2.5 space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #e0e7ff)' }}>
                 {education.map((edu) => (
                   <div key={edu.id} className="relative pl-5">
-                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-slate-50"></div>
+                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
                     <div className="mb-1">
                       <h3 className="text-[12.5px] font-bold text-slate-900">
                         {edu.degree}
                         {edu.field && ` in ${edu.field}`}
                       </h3>
                       <div className="flex justify-between items-center mt-0.5">
-                        <span className="text-indigo-600 font-medium text-[11px]">{edu.institution}</span>
+                        <span className="font-medium text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{edu.institution}</span>
                         <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
                           {formatDate(edu.startDate)}
                           {(edu.startDate || edu.endDate) && ' - '}
@@ -204,9 +204,6 @@ export default function TimelineCreative() {
         <div className="w-[38%] space-y-5">
           {personalInfo.objective && (
             <div>
-              <h2 className="text-[11px] font-bold text-slate-900 uppercase tracking-widest mb-2 border-b-2 border-slate-200 pb-1.5">
-                Objective
-              </h2>
               <p className="text-slate-700 italic text-[11px] bg-white/50 p-2 rounded border border-slate-200/50">
                 "{personalInfo.objective}"
               </p>
@@ -222,9 +219,9 @@ export default function TimelineCreative() {
                 {technicalSkills.map((skill, i) => (
                   <span
                     key={i}
-                    className="bg-white border border-slate-200 text-slate-700 font-medium px-2 py-0.5 rounded text-[10px]"
+                    className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-[11px] rounded font-medium border border-gray-200 dark:border-gray-700"
                   >
-                    {skill}
+                    {typeof skill === 'string' ? skill : (skill as any).name}
                   </span>
                 ))}
               </div>
@@ -239,8 +236,8 @@ export default function TimelineCreative() {
               <ul className="space-y-1">
                 {softSkills.map((skill, i) => (
                   <li key={i} className="text-[11px] text-slate-700 flex items-center gap-1.5">
-                    <i className="bi bi-check2 text-indigo-500 text-xs"></i>
-                    {skill}
+                    <i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i>
+                    {typeof skill === 'string' ? skill : (skill as any).name}
                   </li>
                 ))}
               </ul>

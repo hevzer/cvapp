@@ -19,7 +19,7 @@ export default function ExportButton({ targetRef, filename = 'cv' }: ExportButto
       type="button"
       onClick={handleExport}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300"
+      className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-600 bg-[length:200%_auto] hover:bg-right shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300"
     >
       {loading ? (
         <>

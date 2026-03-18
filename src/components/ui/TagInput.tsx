@@ -10,7 +10,7 @@ interface TagInputProps {
 }
 
 export default function TagInput({
-  tags,
+  tags = [],
   onChange,
   placeholder = 'Type and press Enter...',
   label,

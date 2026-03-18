@@ -43,3 +43,8 @@ export const i18n: Dictionary = {
     present: 'Présent',
   },
 };
+
+export function getSafeLanguage(lang: string | undefined | null): LanguageCode {
+  if (!lang || !i18n[lang as LanguageCode]) return 'en';
+  return lang as LanguageCode;
+}

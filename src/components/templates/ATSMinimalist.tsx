@@ -1,7 +1,7 @@
 'use client';
 
 import { useResumeStore } from '@/store/useResumeStore';
-import { i18n, LanguageCode } from '@/lib/i18n';
+import { i18n, getSafeLanguage } from '@/lib/i18n';
 
 function formatDate(date: string) {
   if (!date) return '';
@@ -11,18 +11,18 @@ function formatDate(date: string) {
 }
 
 export default function ATSMinimalist() {
-  const {
-    personalInfo,
-    summary,
-    experience,
-    education,
-    technicalSkills,
-    softSkills,
-    languages,
-    hiddenKeywords,
-    cvLanguage,
-  } = useResumeStore((s) => s.resumeData);
-  const lang = (i18n[cvLanguage as LanguageCode] ? cvLanguage : 'en') as LanguageCode;
+  const resume = useResumeStore((s) => s.resumeData);
+  const personalInfo = resume.personalInfo || ({} as any);
+  const summary = resume.summary || '';
+  const experience = resume.experience || [];
+  const education = resume.education || [];
+  const technicalSkills = resume.technicalSkills || [];
+  const softSkills = resume.softSkills || [];
+  const languages = resume.languages || [];
+  const hiddenKeywords = resume.hiddenKeywords || [];
+  const cvLanguage = resume.cvLanguage;
+
+  const lang = getSafeLanguage(cvLanguage);
 
   const hasContent =
     personalInfo.fullName ||
@@ -46,9 +46,9 @@ export default function ATSMinimalist() {
   }
 
   return (
-    <div className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto font-['Inter',sans-serif] text-[13px] leading-relaxed min-h-[297mm]">
+    <div className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm]">
       {/* Header */}
-      <div className="text-center border-b-2 border-gray-800 pb-4 mb-5">
+      <div className="text-center pb-4 mb-5" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
         {personalInfo.photoUrl && (
           <div className="flex justify-center mb-3">
             <img
@@ -91,7 +91,7 @@ export default function ATSMinimalist() {
       {/* Summary */}
       {summary && (
         <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].profile}
           </h2>
           <p className="text-gray-700 leading-relaxed">{summary}</p>
@@ -101,7 +101,7 @@ export default function ATSMinimalist() {
       {/* Experience */}
       {experience.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].experience}
           </h2>
           <div className="space-y-4">
@@ -162,30 +162,30 @@ export default function ATSMinimalist() {
       {/* Technical Skills */}
       {technicalSkills.length > 0 && (
         <div className="mb-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].technicalSkills}
           </h2>
-          <p className="text-gray-700">{technicalSkills.join(' • ')}</p>
+          <p className="text-gray-700">{technicalSkills.map(s => typeof s === 'string' ? s : (s as any).name).join(' • ')}</p>
         </div>
       )}
 
       {/* Soft Skills */}
       {softSkills.length > 0 && (
-        <div className="mb-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">
+        <div className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].softSkills}
           </h2>
-          <p className="text-gray-700">{softSkills.join(' • ')}</p>
+          <p className="text-gray-700">{softSkills.map(s => typeof s === 'string' ? s : (s as any).name).join(' • ')}</p>
         </div>
       )}
 
       {/* Languages */}
       {languages.length > 0 && (
         <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].languages}
           </h2>
-          <p className="text-gray-700">{languages.join(' • ')}</p>
+          <p className="text-gray-700">{languages.map(l => typeof l === 'string' ? l : `${(l as any).name}${ (l as any).level ? ` (${(l as any).level})` : '' }`).join(' • ')}</p>
         </div>
       )}
 

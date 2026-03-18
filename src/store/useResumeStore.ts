@@ -40,6 +40,9 @@ interface ResumeStore {
   activeTemplate: TemplateType;
   darkMode: boolean;
   textScale: number;
+  accentColor: string;
+  sidebarColor: string;
+  fontFamily: string;
 
   // Personal Info
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -69,6 +72,9 @@ interface ResumeStore {
   setActiveTemplate: (template: TemplateType) => void;
   setCvLanguage: (lang: string) => void;
   setTextScale: (scale: number) => void;
+  setAccentColor: (color: string) => void;
+  setSidebarColor: (color: string) => void;
+  setFontFamily: (font: string) => void;
 
   // Dark mode
   toggleDarkMode: () => void;
@@ -77,6 +83,7 @@ interface ResumeStore {
   loadExampleData: () => void;
   clearAllData: () => void;
   importLinkedInData: (data: Partial<ResumeData>) => void;
+  setResumeData: (data: ResumeData) => void;
 }
 
 export const useResumeStore = create<ResumeStore>()(
@@ -86,6 +93,9 @@ export const useResumeStore = create<ResumeStore>()(
       activeTemplate: 'ats',
       darkMode: false,
       textScale: 1,
+      accentColor: '#6366f1',
+      sidebarColor: '#1e293b',
+      fontFamily: 'Inter',
 
       updatePersonalInfo: (info) =>
         set((state) => ({
@@ -198,6 +208,12 @@ export const useResumeStore = create<ResumeStore>()(
 
       setTextScale: (textScale) => set({ textScale }),
 
+      setAccentColor: (accentColor) => set({ accentColor }),
+
+      setSidebarColor: (sidebarColor) => set({ sidebarColor }),
+
+      setFontFamily: (fontFamily) => set({ fontFamily }),
+
       setCvLanguage: (cvLanguage) =>
         set((state) => ({
           resumeData: { ...state.resumeData, cvLanguage },
@@ -221,6 +237,7 @@ export const useResumeStore = create<ResumeStore>()(
             },
           },
         })),
+      setResumeData: (resumeData) => set({ resumeData }),
     }),
     {
       name: 'cvapp-storage',
