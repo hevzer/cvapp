@@ -11,6 +11,7 @@ type Dictionary = {
     experience: string;
     education: string;
     contact: string;
+    certifications: string;
     technicalSkills: string;
     softSkills: string;
     languages: string;
@@ -25,6 +26,7 @@ export const i18n: Dictionary = {
     experience: 'Experience',
     education: 'Education',
     contact: 'Contact',
+    certifications: 'Certifications',
     technicalSkills: 'Technical Skills',
     softSkills: 'Soft Skills',
     languages: 'Languages',
@@ -36,6 +38,7 @@ export const i18n: Dictionary = {
     experience: 'Expérience',
     education: 'Éducation',
     contact: 'Contact',
+    certifications: 'Certifications',
     technicalSkills: 'Compétences Techniques',
     softSkills: 'Savoir-être',
     languages: 'Langues',

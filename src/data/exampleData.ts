@@ -60,6 +60,15 @@ export const exampleData: ResumeData = {
         'Graduated with honors. Focus on distributed systems and machine learning. Teaching assistant for Data Structures & Algorithms.',
     },
   ],
+  certifications: [
+    {
+      id: '1',
+      name: 'AWS Certified Solutions Architect',
+      issuer: 'Amazon Web Services',
+      date: '2023-05',
+      url: 'aws.amazon.com/verification',
+    },
+  ],
   technicalSkills: [
     'React',
     'TypeScript',

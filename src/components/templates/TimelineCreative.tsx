@@ -4,11 +4,16 @@ import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function formatDate(date: string) {
+function formatDate(date: string, lang: string) {
   if (!date) return '';
   const [year, month] = date.split('-');
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${monthNames[parseInt(month) - 1]} ${year}`;
+  if (!month) return year;
+  try {
+    const d = new Date(parseInt(year), parseInt(month) - 1);
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
+  } catch (e) {
+    return `${month}/${year}`;
+  }
 }
 
 export default function TimelineCreative() {
@@ -17,6 +22,7 @@ export default function TimelineCreative() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
@@ -30,6 +36,7 @@ export default function TimelineCreative() {
     summary ||
     experience.length > 0 ||
     education.length > 0 ||
+    certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
     languages.length > 0;
@@ -150,10 +157,10 @@ export default function TimelineCreative() {
                       <h3 className="text-[12px] font-bold text-slate-900">{exp.position}</h3>
                       <div className="flex justify-between items-center mt-0.5">
                         <span className="font-semibold text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{exp.company}</span>
-                        <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                          {formatDate(exp.startDate)}
-                          {(exp.startDate || exp.endDate || exp.current) && ' - '}
-                          {exp.current ? i18n[lang].present : formatDate(exp.endDate)}
+                        <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                          {formatDate(exp.startDate, lang)}
+                          {(exp.startDate || exp.endDate || exp.current) && ' — '}
+                          {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
                         </span>
                       </div>
                     </div>
@@ -179,20 +186,60 @@ export default function TimelineCreative() {
                     <div className="mb-1">
                       <h3 className="text-[12.5px] font-bold text-slate-900">
                         {edu.degree}
-                        {edu.field && ` in ${edu.field}`}
                       </h3>
+                      {edu.field && (
+                        <p className="text-[11.5px] font-medium text-slate-700 mt-0.5">{edu.field}</p>
+                      )}
                       <div className="flex justify-between items-center mt-0.5">
                         <span className="font-medium text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{edu.institution}</span>
-                        <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                          {formatDate(edu.startDate)}
-                          {(edu.startDate || edu.endDate) && ' - '}
-                          {formatDate(edu.endDate)}
+                        <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                          {formatDate(edu.startDate, lang)}
+                          {(edu.startDate || edu.endDate) && ' — '}
+                          {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
                         </span>
                       </div>
                     </div>
                     {edu.description && (
                       <p className="text-slate-600 text-[11px] leading-[1.5] mt-1.5">{edu.description}</p>
                     )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications (Timeline) */}
+          {certifications.length > 0 && (
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-6 h-6 rounded flex items-center justify-center text-white" style={{ backgroundColor: 'var(--accent, #6366f1)' }}>
+                  <i className="bi bi-award text-xs"></i>
+                </div>
+                <h2 className="text-[13px] font-bold text-slate-900 uppercase tracking-widest">
+                  {i18n[lang].certifications}
+                </h2>
+              </div>
+              <div className="relative ml-2.5 space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #e0e7ff)' }}>
+                {certifications.map((cert) => (
+                  <div key={cert.id} className="relative pl-5">
+                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+                    <div className="mb-1">
+                      <h3 className="text-[12.5px] font-bold text-slate-900">
+                        {cert.name}
+                        {cert.url && (
+                          <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:text-indigo-800 break-all text-xs print:text-gray-900 print:no-underline">
+                            <i className="bi bi-box-arrow-up-right print:hidden"></i>
+                            <span className="hidden print:inline"> ({cert.url})</span>
+                          </a>
+                        )}
+                      </h3>
+                      <div className="flex justify-between items-center mt-0.5">
+                        <span className="font-medium text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{cert.issuer}</span>
+                        <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                          {formatDate(cert.date, lang)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

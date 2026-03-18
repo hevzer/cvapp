@@ -4,11 +4,16 @@ import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function formatDate(date: string) {
+function formatDate(date: string, lang: string) {
   if (!date) return '';
   const [year, month] = date.split('-');
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${monthNames[parseInt(month) - 1]} ${year}`;
+  if (!month) return year;
+  try {
+    const d = new Date(parseInt(year), parseInt(month) - 1);
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
+  } catch (e) {
+    return `${month}/${year}`;
+  }
 }
 
 export default function TimelineTwoColumn() {
@@ -17,6 +22,7 @@ export default function TimelineTwoColumn() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
@@ -30,6 +36,7 @@ export default function TimelineTwoColumn() {
     summary ||
     experience.length > 0 ||
     education.length > 0 ||
+    certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
     languages.length > 0;
@@ -222,9 +229,9 @@ export default function TimelineTwoColumn() {
                     <div className="flex justify-between items-center pr-2">
                       <span className="font-semibold text-[11.5px]" style={{ color: 'var(--accent, #6366f1)' }}>{exp.company}</span>
                       <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
-                        {formatDate(exp.startDate)}
+                        {formatDate(exp.startDate, lang)}
                         {(exp.startDate || exp.endDate || exp.current) && ' — '}
-                        {exp.current ? i18n[lang].present : formatDate(exp.endDate)}
+                        {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
                       </span>
                     </div>
                   </div>
@@ -249,22 +256,54 @@ export default function TimelineTwoColumn() {
                 <div key={edu.id} className="relative pl-5">
                   <div className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
                   <div className="flex flex-col gap-0.5 mb-1">
-                    <h3 className="font-bold text-slate-900 text-[12.5px]">
-                      {edu.degree}
-                      {edu.field && ` in ${edu.field}`}
-                    </h3>
+                    <h3 className="font-bold text-slate-900 text-[12.5px]">{edu.degree}</h3>
+                    {edu.field && <p className="text-[11.5px] font-medium text-slate-700">{edu.field}</p>}
                     <div className="flex justify-between items-center pr-2">
                       <span className="font-semibold text-[11.5px]" style={{ color: 'var(--accent, #6366f1)' }}>{edu.institution}</span>
                       <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
-                        {formatDate(edu.startDate)}
+                        {formatDate(edu.startDate, lang)}
                         {(edu.startDate || edu.endDate) && ' — '}
-                        {formatDate(edu.endDate)}
+                        {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
                       </span>
                     </div>
                   </div>
                   {edu.description && (
                     <p className="text-slate-600 text-[11px] leading-snug mt-1">{edu.description}</p>
                   )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Certifications Timeline */}
+        {certifications.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-3.5 flex items-center gap-2">
+              <div className="w-5 h-[2px]" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+              {i18n[lang].certifications}
+            </h2>
+            <div className="relative ml-[5px] space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #c7d2fe)' }}>
+              {certifications.map((cert) => (
+                <div key={cert.id} className="relative pl-5">
+                  <div className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+                  <div className="flex flex-col gap-0.5 mb-1">
+                    <h3 className="font-bold text-slate-900 text-[12.5px]">
+                      {cert.name}
+                      {cert.url && (
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:text-indigo-800 break-all text-xs print:text-gray-900 print:no-underline">
+                          <i className="bi bi-box-arrow-up-right print:hidden"></i>
+                          <span className="hidden print:inline"> ({cert.url})</span>
+                        </a>
+                      )}
+                    </h3>
+                    <div className="flex justify-between items-center pr-2">
+                      <span className="font-semibold text-[11.5px]" style={{ color: 'var(--accent, #6366f1)' }}>{cert.issuer}</span>
+                      <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                        {formatDate(cert.date, lang)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

@@ -3,11 +3,16 @@
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
 
-function formatDate(date: string) {
+function formatDate(date: string, lang: string) {
   if (!date) return '';
   const [year, month] = date.split('-');
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${monthNames[parseInt(month) - 1]} ${year}`;
+  if (!month) return year;
+  try {
+    const d = new Date(parseInt(year), parseInt(month) - 1);
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
+  } catch (e) {
+    return `${month}/${year}`;
+  }
 }
 
 export default function ATSMinimalist() {
@@ -16,6 +21,7 @@ export default function ATSMinimalist() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
@@ -29,6 +35,7 @@ export default function ATSMinimalist() {
     summary ||
     experience.length > 0 ||
     education.length > 0 ||
+    certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
     languages.length > 0;
@@ -112,10 +119,10 @@ export default function ATSMinimalist() {
                     <h3 className="font-bold text-gray-900">{exp.position}</h3>
                     <p className="text-gray-600 font-medium">{exp.company}</p>
                   </div>
-                  <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                    {formatDate(exp.startDate)}
+                  <span className="text-gray-600 min-w-[130px] text-right">
+                    {formatDate(exp.startDate, lang)}
                     {(exp.startDate || exp.endDate || exp.current) && ' — '}
-                    {exp.current ? i18n[lang].present : formatDate(exp.endDate)}
+                    {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
                   </span>
                 </div>
                 {exp.description && (
@@ -138,21 +145,51 @@ export default function ATSMinimalist() {
               <div key={edu.id}>
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-bold text-gray-900">
-                      {edu.degree}
-                      {edu.field && ` in ${edu.field}`}
-                    </h3>
+                    <h3 className="font-bold text-gray-900">{edu.degree}</h3>
+                    {edu.field && <p className="text-gray-700 text-sm font-medium">{edu.field}</p>}
                     <p className="text-gray-600 font-medium">{edu.institution}</p>
                   </div>
-                  <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
-                    {formatDate(edu.startDate)}
+                  <span className="text-gray-600 min-w-[130px] text-right">
+                    {formatDate(edu.startDate, lang)}
                     {(edu.startDate || edu.endDate) && ' — '}
-                    {formatDate(edu.endDate)}
+                    {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
                   </span>
                 </div>
                 {edu.description && (
                   <p className="mt-1 text-gray-700 leading-relaxed">{edu.description}</p>
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Certifications */}
+      {certifications.length > 0 && (
+        <div className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-3">
+            {i18n[lang].certifications}
+          </h2>
+          <div className="space-y-3">
+            {certifications.map((cert) => (
+              <div key={cert.id}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-bold text-gray-900">
+                      {cert.name}
+                      {cert.url && (
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:text-indigo-800 break-all text-xs print:text-gray-900 print:no-underline">
+                          <i className="bi bi-box-arrow-up-right print:hidden"></i>
+                          <span className="hidden print:inline"> ({cert.url})</span>
+                        </a>
+                      )}
+                    </h3>
+                    <p className="text-gray-600 font-medium">{cert.issuer}</p>
+                  </div>
+                  <span className="text-gray-600 min-w-[130px] text-right">
+                    {formatDate(cert.date, lang)}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

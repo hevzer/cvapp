@@ -7,6 +7,7 @@ import type {
   PersonalInfo,
   Experience,
   Education,
+  Certification,
   TemplateType,
 } from '@/types/resume';
 import { exampleData } from '@/data/exampleData';
@@ -28,6 +29,7 @@ const emptyResume: ResumeData = {
   summary: '',
   experience: [],
   education: [],
+  certifications: [],
   technicalSkills: [],
   softSkills: [],
   languages: [],
@@ -59,6 +61,11 @@ interface ResumeStore {
   addEducation: () => void;
   removeEducation: (id: string) => void;
   updateEducation: (id: string, data: Partial<Education>) => void;
+
+  // Certifications
+  addCertification: () => void;
+  removeCertification: (id: string) => void;
+  updateCertification: (id: string, data: Partial<Certification>) => void;
 
   // Skills & Languages
   setTechnicalSkills: (skills: string[]) => void;
@@ -180,6 +187,41 @@ export const useResumeStore = create<ResumeStore>()(
             ...state.resumeData,
             education: state.resumeData.education.map((e) =>
               e.id === id ? { ...e, ...data } : e
+            ),
+          },
+        })),
+
+      addCertification: () =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            certifications: [
+              ...state.resumeData.certifications,
+              {
+                id: crypto.randomUUID(),
+                name: '',
+                issuer: '',
+                date: '',
+                url: '',
+              },
+            ],
+          },
+        })),
+
+      removeCertification: (id) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            certifications: state.resumeData.certifications.filter((c) => c.id !== id),
+          },
+        })),
+
+      updateCertification: (id, data) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            certifications: state.resumeData.certifications.map((c) =>
+              c.id === id ? { ...c, ...data } : c
             ),
           },
         })),

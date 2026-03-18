@@ -62,6 +62,9 @@ export default function LinkedInImport() {
             linkedin: profileData['Profile URL'] || profileData.url || '',
             website: profileData.Website || profileData.website || '',
             photoUrl: '',
+            github: '',
+            objective: '',
+            drivingLicense: '',
           },
           summary:
             profileData.Summary || profileData.summary || profileData.About || '',
@@ -83,7 +86,7 @@ export default function LinkedInImport() {
             endDate: e['End Date'] || e.endDate || '',
             description: e.Notes || e.description || e.activities || '',
           })),
-          skills: skillEntries,
+          technicalSkills: skillEntries,
         });
 
         alert('LinkedIn data imported successfully!');
@@ -100,12 +103,15 @@ export default function LinkedInImport() {
             title: json.headline || json.title || '',
             email: json.email || json.emailAddress || '',
             phone: json.phone || '',
-            location: json.location || json.locationName || '',
-            linkedin: json.profileUrl || json.url || '',
-            website: json.website || '',
+            location: json.location || json.address || '',
+            linkedin: json.linkedin || json.linkedIn || '',
+            website: json.website || json.portfolio || '',
             photoUrl: '',
+            github: '',
+            objective: '',
+            drivingLicense: '',
           },
-          summary: json.summary || json.about || '',
+          summary: json.summary || json.about || json.objective || '',
           experience: (json.positions || json.experience || []).map(
             (p: Record<string, string>) => ({
               id: crypto.randomUUID(),
@@ -128,7 +134,7 @@ export default function LinkedInImport() {
               description: e.description || e.notes || '',
             })
           ),
-          skills: json.skills
+          technicalSkills: json.skills
             ? json.skills
                 .map((s: string | Record<string, string>) =>
                   typeof s === 'string' ? s : s.name || s.Name || ''

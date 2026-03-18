@@ -4,11 +4,16 @@ import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function formatDate(date: string) {
+function formatDate(date: string, lang: string) {
   if (!date) return '';
   const [year, month] = date.split('-');
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${monthNames[parseInt(month) - 1]} ${year}`;
+  if (!month) return year;
+  try {
+    const d = new Date(parseInt(year), parseInt(month) - 1);
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
+  } catch (e) {
+    return `${month}/${year}`;
+  }
 }
 
 export default function ModernCreative() {
@@ -17,6 +22,7 @@ export default function ModernCreative() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
@@ -30,6 +36,7 @@ export default function ModernCreative() {
     summary ||
     experience.length > 0 ||
     education.length > 0 ||
+    certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
     languages.length > 0;
@@ -214,13 +221,43 @@ export default function ModernCreative() {
                       <p className="text-gray-600 font-medium text-sm">{exp.company}</p>
                     </div>
                     <span className="text-xs text-gray-500 whitespace-nowrap ml-4 mt-0.5 bg-gray-100 px-2 py-0.5 rounded">
-                      {formatDate(exp.startDate)}
+                      {formatDate(exp.startDate, lang)}
                       {(exp.startDate || exp.endDate || exp.current) && ' — '}
-                      {exp.current ? i18n[lang].present : formatDate(exp.endDate)}
+                      {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
                     </span>
                   </div>
                   {exp.description && (
                     <p className="mt-2 text-gray-700 leading-relaxed">{exp.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Education */}
+        {education.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
+              {i18n[lang].education}
+            </h2>
+            <div className="space-y-5">
+              {education.map((edu) => (
+                <div key={edu.id}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-bold text-gray-900">{edu.degree}</h3>
+                      {edu.field && <p className="text-gray-700 font-medium text-sm mt-0.5">{edu.field}</p>}
+                      <p className="text-gray-600 font-medium text-[12.5px]">{edu.institution}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 whitespace-nowrap ml-4 mt-0.5 bg-gray-100 px-2 py-0.5 rounded">
+                      {formatDate(edu.startDate, lang)}
+                      {(edu.startDate || edu.endDate) && ' — '}
+                      {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
+                    </span>
+                  </div>
+                  {edu.description && (
+                    <p className="mt-2 text-gray-700 leading-relaxed">{edu.description}</p>
                   )}
                 </div>
               ))}

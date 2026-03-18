@@ -32,11 +32,20 @@ export interface Education {
   description: string;
 }
 
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  url: string;
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   summary: string;
   experience: Experience[];
   education: Education[];
+  certifications: Certification[];
   technicalSkills: string[];
   softSkills: string[];
   languages: string[];

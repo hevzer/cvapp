@@ -12,6 +12,7 @@ import SummaryForm from './forms/SummaryForm';
 import ExperienceForm from './forms/ExperienceForm';
 import AboutModal from './AboutModal';
 import EducationForm from './forms/EducationForm';
+import CertificationsForm from './forms/CertificationsForm';
 import TechnicalSkillsForm from './forms/TechnicalSkillsForm';
 import SoftSkillsForm from './forms/SoftSkillsForm';
 import LanguagesForm from './forms/LanguagesForm';
@@ -143,6 +144,10 @@ export default function ResumeBuilder() {
 
           <Accordion title={i18n[cvLang].education} icon="🎓">
             <EducationForm />
+          </Accordion>
+
+          <Accordion title={i18n[cvLang].certifications} icon="📜">
+            <CertificationsForm />
           </Accordion>
 
           <Accordion title={i18n[cvLang].technicalSkills} icon="💻">
