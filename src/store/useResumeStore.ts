@@ -42,6 +42,8 @@ interface ResumeStore {
   activeTemplate: TemplateType;
   darkMode: boolean;
   textScale: number;
+  spacingScale: number;
+  fontScale: number;
   accentColor: string;
   sidebarColor: string;
   fontFamily: string;
@@ -79,6 +81,8 @@ interface ResumeStore {
   setActiveTemplate: (template: TemplateType) => void;
   setCvLanguage: (lang: string) => void;
   setTextScale: (scale: number) => void;
+  setSpacingScale: (scale: number) => void;
+  setFontScale: (scale: number) => void;
   setAccentColor: (color: string) => void;
   setSidebarColor: (color: string) => void;
   setFontFamily: (font: string) => void;
@@ -100,6 +104,8 @@ export const useResumeStore = create<ResumeStore>()(
       activeTemplate: 'ats',
       darkMode: false,
       textScale: 1,
+      spacingScale: 1,
+      fontScale: 1,
       accentColor: '#6366f1',
       sidebarColor: '#1e293b',
       fontFamily: 'Inter',
@@ -249,6 +255,10 @@ export const useResumeStore = create<ResumeStore>()(
       setActiveTemplate: (template) => set({ activeTemplate: template }),
 
       setTextScale: (textScale) => set({ textScale }),
+
+      setSpacingScale: (spacingScale) => set({ spacingScale }),
+
+      setFontScale: (fontScale) => set({ fontScale }),
 
       setAccentColor: (accentColor) => set({ accentColor }),
 

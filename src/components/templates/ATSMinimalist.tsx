@@ -101,7 +101,7 @@ export default function ATSMinimalist() {
           <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].profile}
           </h2>
-          <p className="text-gray-700 leading-relaxed">{summary}</p>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{summary}</p>
         </div>
       )}
 
@@ -126,7 +126,7 @@ export default function ATSMinimalist() {
                   </span>
                 </div>
                 {exp.description && (
-                  <p className="mt-1.5 text-gray-700 leading-relaxed">{exp.description}</p>
+                  <p className="mt-1.5 text-gray-700 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
                 )}
               </div>
             ))}
@@ -156,7 +156,7 @@ export default function ATSMinimalist() {
                   </span>
                 </div>
                 {edu.description && (
-                  <p className="mt-1 text-gray-700 leading-relaxed">{edu.description}</p>
+                  <p className="mt-1 text-gray-700 leading-relaxed whitespace-pre-wrap">{edu.description}</p>
                 )}
               </div>
             ))}

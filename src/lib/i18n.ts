@@ -40,7 +40,7 @@ export const i18n: Dictionary = {
     contact: 'Contact',
     certifications: 'Certifications',
     technicalSkills: 'Compétences Techniques',
-    softSkills: 'Savoir-être',
+    softSkills: 'Soft Skills',
     languages: 'Langues',
     drivingLicense: 'Permis de Conduire',
     present: 'Présent',

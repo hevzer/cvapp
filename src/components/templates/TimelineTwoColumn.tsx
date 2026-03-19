@@ -137,7 +137,7 @@ export default function TimelineTwoColumn() {
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2.5 border-b border-slate-700 pb-1">
               {i18n[lang].profile}
             </h2>
-            <p className="text-slate-300 text-[11px] leading-relaxed">
+            <p className="text-slate-300 text-[11px] leading-relaxed whitespace-pre-wrap">
               {summary}
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function TimelineTwoColumn() {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-slate-600 text-[11px] leading-snug mt-1">{exp.description}</p>
+                    <p className="text-slate-600 text-[11px] leading-snug mt-1 whitespace-pre-wrap">{exp.description}</p>
                   )}
                 </div>
               ))}
@@ -268,7 +268,7 @@ export default function TimelineTwoColumn() {
                     </div>
                   </div>
                   {edu.description && (
-                    <p className="text-slate-600 text-[11px] leading-snug mt-1">{edu.description}</p>
+                    <p className="text-slate-600 text-[11px] leading-snug mt-1 whitespace-pre-wrap">{edu.description}</p>
                   )}
                 </div>
               ))}

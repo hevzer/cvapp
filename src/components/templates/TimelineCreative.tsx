@@ -135,7 +135,7 @@ export default function TimelineCreative() {
                 <i className="bi bi-person-lines-fill" style={{ color: 'var(--accent, #6366f1)' }}></i>
                 {i18n[lang].profile}
               </h2>
-              <p className="text-slate-700 leading-[1.5] text-[11px] bg-white p-3 rounded-xl border border-slate-100 shadow-sm shadow-slate-200/50">
+              <p className="text-slate-700 leading-[1.5] text-[11px] bg-white p-3 rounded-xl border border-slate-100 shadow-sm shadow-slate-200/50 whitespace-pre-wrap">
                 {summary}
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function TimelineCreative() {
                       </div>
                     </div>
                     {exp.description && (
-                      <p className="text-slate-600 text-[11px] leading-[1.5] mt-1">{exp.description}</p>
+                      <p className="text-slate-600 text-[11px] leading-[1.5] mt-1 whitespace-pre-wrap">{exp.description}</p>
                     )}
                   </div>
                 ))}
@@ -200,7 +200,7 @@ export default function TimelineCreative() {
                       </div>
                     </div>
                     {edu.description && (
-                      <p className="text-slate-600 text-[11px] leading-[1.5] mt-1.5">{edu.description}</p>
+                      <p className="text-slate-600 text-[11px] leading-[1.5] mt-1.5 whitespace-pre-wrap">{edu.description}</p>
                     )}
                   </div>
                 ))}

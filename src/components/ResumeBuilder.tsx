@@ -5,6 +5,8 @@ import { useResumeStore } from '../store/useResumeStore';
 import Accordion from './ui/Accordion';
 import TemplateToggle from './ui/TemplateToggle';
 import TextScaleSlider from './ui/TextScaleSlider';
+import SpacingSlider from './ui/SpacingSlider';
+import FontScaleSlider from './ui/FontScaleSlider';
 import StyleCustomizer from './ui/StyleCustomizer';
 import DarkModeToggle from './ui/DarkModeToggle';
 import PersonalInfoForm from './forms/PersonalInfoForm';
@@ -35,6 +37,8 @@ export default function ResumeBuilder() {
   const setCvLang = useResumeStore((s) => s.setCvLanguage);
   const previewRef = useRef<HTMLDivElement>(null);
   const textScale = useResumeStore((s) => s.textScale);
+  const spacingScale = useResumeStore((s) => s.spacingScale);
+  const fontScale = useResumeStore((s) => s.fontScale);
   const accentColor = useResumeStore((s) => s.accentColor);
   const sidebarColor = useResumeStore((s) => s.sidebarColor);
   const fontFamily = useResumeStore((s) => s.fontFamily);
@@ -127,6 +131,8 @@ export default function ResumeBuilder() {
         <aside className="w-[440px] flex-shrink-0 overflow-y-auto border-r border-gray-200/60 dark:border-white/[0.06] bg-white/40 dark:bg-gray-900/40 backdrop-blur-xl p-5 animate-stagger space-y-4 print:hidden">
           <TemplateToggle />
           <TextScaleSlider />
+          <SpacingSlider />
+          <FontScaleSlider />
           <StyleCustomizer />
           <LinkedInImport />
 
@@ -174,6 +180,70 @@ export default function ResumeBuilder() {
 
         {/* Right Panel — Preview */}
         <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-100 via-gray-200 to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-8 print:p-0 print:m-0 print:bg-none print:overflow-visible">
+          <style>
+            {`
+              #cv-preview {
+                --ss: ${spacingScale};
+                --fs: ${fontScale};
+              }
+              
+              /* Typography Scaling */
+              #cv-preview .text-\\[9px\\] { font-size: calc(9px * var(--fs)) !important; }
+              #cv-preview .text-\\[10px\\] { font-size: calc(10px * var(--fs)) !important; }
+              #cv-preview .text-\\[11px\\] { font-size: calc(11px * var(--fs)) !important; }
+              #cv-preview .text-\\[11\\.5px\\] { font-size: calc(11.5px * var(--fs)) !important; }
+              #cv-preview .text-\\[12px\\] { font-size: calc(12px * var(--fs)) !important; }
+              #cv-preview .text-\\[12\\.5px\\] { font-size: calc(12.5px * var(--fs)) !important; }
+              #cv-preview .text-\\[13px\\] { font-size: calc(13px * var(--fs)) !important; }
+              #cv-preview .text-xs { font-size: calc(0.75rem * var(--fs)) !important; }
+              #cv-preview .text-sm { font-size: calc(0.875rem * var(--fs)) !important; }
+              #cv-preview .text-base { font-size: calc(1rem * var(--fs)) !important; }
+              #cv-preview .text-lg { font-size: calc(1.125rem * var(--fs)) !important; }
+              #cv-preview .text-xl { font-size: calc(1.25rem * var(--fs)) !important; }
+              #cv-preview .text-2xl { font-size: calc(1.5rem * var(--fs)) !important; }
+              #cv-preview .text-3xl { font-size: calc(1.875rem * var(--fs)) !important; }
+
+              /* Spacing Scaling */
+              #cv-preview .mb-1 { margin-bottom: calc(0.25rem * var(--ss)) !important; }
+              #cv-preview .mb-1\\.5 { margin-bottom: calc(0.375rem * var(--ss)) !important; }
+              #cv-preview .mb-2 { margin-bottom: calc(0.5rem * var(--ss)) !important; }
+              #cv-preview .mb-2\\.5 { margin-bottom: calc(0.625rem * var(--ss)) !important; }
+              #cv-preview .mb-3 { margin-bottom: calc(0.75rem * var(--ss)) !important; }
+              #cv-preview .mb-3\\.5 { margin-bottom: calc(0.875rem * var(--ss)) !important; }
+              #cv-preview .mb-4 { margin-bottom: calc(1rem * var(--ss)) !important; }
+              #cv-preview .mb-5 { margin-bottom: calc(1.25rem * var(--ss)) !important; }
+              #cv-preview .mb-6 { margin-bottom: calc(1.5rem * var(--ss)) !important; }
+              
+              #cv-preview .pb-1 { padding-bottom: calc(0.25rem * var(--ss)) !important; }
+              #cv-preview .pb-1\\.5 { padding-bottom: calc(0.375rem * var(--ss)) !important; }
+              #cv-preview .pb-2 { padding-bottom: calc(0.5rem * var(--ss)) !important; }
+              #cv-preview .pb-3 { padding-bottom: calc(0.75rem * var(--ss)) !important; }
+              #cv-preview .pb-4 { padding-bottom: calc(1rem * var(--ss)) !important; }
+              
+              #cv-preview .mt-0 { margin-top: 0 !important; }
+              #cv-preview .mt-0\\.5 { margin-top: calc(0.125rem * var(--ss)) !important; }
+              #cv-preview .mt-1 { margin-top: calc(0.25rem * var(--ss)) !important; }
+              #cv-preview .mt-1\\.5 { margin-top: calc(0.375rem * var(--ss)) !important; }
+              #cv-preview .mt-2 { margin-top: calc(0.5rem * var(--ss)) !important; }
+              #cv-preview .mt-3 { margin-top: calc(0.75rem * var(--ss)) !important; }
+              
+              #cv-preview .space-y-1 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0.25rem * var(--ss)) !important; }
+              #cv-preview .space-y-1\\.5 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0.375rem * var(--ss)) !important; }
+              #cv-preview .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0.5rem * var(--ss)) !important; }
+              #cv-preview .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(0.75rem * var(--ss)) !important; }
+              #cv-preview .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(1rem * var(--ss)) !important; }
+              #cv-preview .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: calc(1.25rem * var(--ss)) !important; }
+              
+              #cv-preview .gap-0\\.5 { gap: calc(0.125rem * var(--ss)) !important; }
+              #cv-preview .gap-1 { gap: calc(0.25rem * var(--ss)) !important; }
+              #cv-preview .gap-1\\.5 { gap: calc(0.375rem * var(--ss)) !important; }
+              #cv-preview .gap-2 { gap: calc(0.5rem * var(--ss)) !important; }
+              #cv-preview .gap-3 { gap: calc(0.75rem * var(--ss)) !important; }
+              #cv-preview .gap-4 { gap: calc(1rem * var(--ss)) !important; }
+              #cv-preview .gap-5 { gap: calc(1.25rem * var(--ss)) !important; }
+              #cv-preview .gap-6 { gap: calc(1.5rem * var(--ss)) !important; }
+            `}
+          </style>
           <div className="max-w-[900px] mx-auto animate-scale-in print:max-w-none print:mx-0 print:animate-none">
             <div
               id="cv-preview"

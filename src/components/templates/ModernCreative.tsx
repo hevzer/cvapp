@@ -202,7 +202,7 @@ export default function ModernCreative() {
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].profile}
             </h2>
-            <p className="text-gray-700 leading-relaxed">{summary}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{summary}</p>
           </div>
         )}
 
@@ -227,7 +227,7 @@ export default function ModernCreative() {
                     </span>
                   </div>
                   {exp.description && (
-                    <p className="mt-2 text-gray-700 leading-relaxed">{exp.description}</p>
+                    <p className="mt-2 text-gray-700 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
                   )}
                 </div>
               ))}
@@ -257,7 +257,7 @@ export default function ModernCreative() {
                     </span>
                   </div>
                   {edu.description && (
-                    <p className="mt-2 text-gray-700 leading-relaxed">{edu.description}</p>
+                    <p className="mt-2 text-gray-700 leading-relaxed whitespace-pre-wrap">{edu.description}</p>
                   )}
                 </div>
               ))}
