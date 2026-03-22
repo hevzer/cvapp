@@ -3,11 +3,11 @@
 import { useResumeStore } from '@/store/useResumeStore';
 import type { TemplateType } from '@/types/resume';
 
-const templates: { id: TemplateType; label: string; desc: string }[] = [
-  { id: 'ats', label: 'ATS Minimalist', desc: 'Clean, single-column' },
-  { id: 'modern', label: 'Modern Creative', desc: 'Two-column, styled' },
-  { id: 'timeline', label: 'Timeline', desc: 'Vertical experience flow' },
-  { id: 'timelineTwoColumn', label: 'Timeline Two-Column', desc: 'Timeline with sidebar' },
+const templates: { id: TemplateType; label: string; desc: string; icon: string }[] = [
+  { id: 'ats', label: 'ATS Minimalist', desc: 'Strict semantic flow', icon: 'file-text' },
+  { id: 'modern', label: 'Modern Creative', desc: 'Sleek two-column', icon: 'columns-gap' },
+  { id: 'timeline', label: 'Timeline', desc: 'Vertical chronographics', icon: 'clock-history' },
+  { id: 'timelineTwoColumn', label: 'Split Timeline', desc: 'Sidebar & Timeline', icon: 'layout-sidebar' },
 ];
 
 export default function TemplateToggle() {
@@ -15,20 +15,40 @@ export default function TemplateToggle() {
   const setActiveTemplate = useResumeStore((s) => s.setActiveTemplate);
 
   return (
-    <div className="flex gap-2">
+    <div className="grid grid-cols-2 gap-3 mb-1">
       {templates.map((t) => (
         <button
           key={t.id}
           type="button"
           onClick={() => setActiveTemplate(t.id)}
-          className={`flex-1 px-4 py-3 rounded-2xl text-sm font-medium border transition-all duration-200 active:scale-[0.98] ${
+          className={`relative flex flex-col items-start p-4 rounded-2xl text-left border transition-all duration-300 outline-none active:scale-[0.98] ${
             activeTemplate === t.id
-              ? 'border-indigo-500/50 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 shadow-sm shadow-indigo-500/10 ring-1 ring-indigo-500/30'
-              : 'border-gray-200/60 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.03] text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-white/10 hover:bg-gray-50 dark:hover:bg-white/[0.05]'
+              ? 'bg-cyan-50 border-cyan-200 dark:bg-cyan-900/40 dark:border-cyan-500/50 shadow-sm'
+              : 'bg-white border-transparent shadow-[0_2px_8px_rgb(0,0,0,0.06)] hover:shadow-md dark:shadow-none dark:bg-slate-800 dark:hover:bg-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700'
           }`}
         >
-          <div className="font-semibold">{t.label}</div>
-          <div className="text-xs opacity-60 mt-0.5">{t.desc}</div>
+          <div className={`mb-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+            activeTemplate === t.id ? 'bg-cyan-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+          }`}>
+            <i className={`bi bi-${t.icon} text-[13px]`}></i>
+          </div>
+          <div className={`text-[12px] font-bold tracking-wide uppercase transition-colors ${
+            activeTemplate === t.id ? 'text-cyan-900 dark:text-cyan-200' : 'text-slate-700 dark:text-slate-200'
+          }`}>
+            {t.label}
+          </div>
+          <div className={`text-[10px] mt-1 font-medium transition-colors ${
+            activeTemplate === t.id ? 'text-cyan-700/80 dark:text-cyan-300/80' : 'text-slate-500 dark:text-slate-400'
+          }`}>
+            {t.desc}
+          </div>
+          
+          {/* Active Radio Indicator */}
+          {activeTemplate === t.id && (
+            <div className="absolute top-4 right-4 w-4 h-4 bg-cyan-600 rounded-full flex items-center justify-center shadow-sm">
+              <i className="bi bi-check2 text-white text-[10px]"></i>
+            </div>
+          )}
         </button>
       ))}
     </div>

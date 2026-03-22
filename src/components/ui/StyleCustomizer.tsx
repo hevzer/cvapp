@@ -8,7 +8,7 @@ const colorPresets = [
   { name: 'Emerald', hex: '#10b981' },
   { name: 'Rose', hex: '#f43f5e' },
   { name: 'Amber', hex: '#f59e0b' },
-  { name: 'Violet', hex: '#8b5cf6' },
+  { name: 'Cyan', hex: '#06b6d4' },
   { name: 'Slate', hex: '#475569' },
   { name: 'Teal', hex: '#14b8a6' },
 ];
@@ -20,7 +20,7 @@ const sidebarPresets = [
   { name: 'Midnight', hex: '#020617' },
   { name: 'Emerald 900', hex: '#064e3b' },
   { name: 'Rose 900', hex: '#4c0519' },
-  { name: 'Violet 900', hex: '#2e1065' },
+  { name: 'Cyan 900', hex: '#164e63' },
   { name: 'Black', hex: '#000000' },
 ];
 
@@ -41,65 +41,65 @@ export default function StyleCustomizer() {
   const setFontFamily = useResumeStore((s) => s.setFontFamily);
 
   return (
-    <div className="space-y-3">
+    <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-transparent shadow-[0_2px_8px_rgb(0,0,0,0.08)] dark:shadow-none space-y-5">
       {/* Accent Color */}
       <div>
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 block">
+        <label className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300 mb-3 block">
+          <i className="bi bi-palette-fill text-[11px] text-cyan-500"></i>
           Accent Color
         </label>
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {colorPresets.map((color) => (
             <button
               key={color.hex}
               type="button"
               title={color.name}
               onClick={() => setAccentColor(color.hex)}
-              className={`w-6 h-6 rounded-full transition-all duration-150 hover:scale-110 active:scale-95 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 ${
-                accentColor === color.hex
-                  ? 'ring-2 ring-gray-400 dark:ring-gray-300 scale-110'
-                  : 'ring-1 ring-black/10 dark:ring-white/10'
-              }`}
+              className="relative w-7 h-7 flex items-center justify-center rounded-full transition-all duration-300 active:scale-90 outline-none hover:shadow-md"
               style={{ backgroundColor: color.hex }}
-            />
+            >
+              <i className={`bi bi-check2 text-white text-sm transition-transform duration-300 ${accentColor === color.hex ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}></i>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Sidebar Color */}
       <div>
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 block">
+        <label className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300 mb-3 block">
+          <i className="bi bi-layout-sidebar-inset text-[11px] text-cyan-500"></i>
           Sidebar Color
         </label>
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {sidebarPresets.map((color) => (
             <button
               key={color.hex}
               type="button"
               title={color.name}
               onClick={() => setSidebarColor(color.hex)}
-              className={`w-6 h-6 rounded-full transition-all duration-150 hover:scale-110 active:scale-95 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 ${
-                sidebarColor === color.hex
-                  ? 'ring-2 ring-gray-400 dark:ring-gray-300 scale-110'
-                  : 'ring-1 ring-black/10 dark:ring-white/10'
-              }`}
+              className="relative w-7 h-7 flex items-center justify-center rounded-full transition-all duration-300 active:scale-90 outline-none hover:shadow-[0_2px_8px_rgb(0,0,0,0.3)] border border-white/10"
               style={{ backgroundColor: color.hex }}
-            />
+            >
+              <i className={`bi bi-check2 text-white text-sm transition-transform duration-300 ${sidebarColor === color.hex ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}></i>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Font Family */}
       <div>
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5 block">
-          Font
+        <label className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300 mb-2 block">
+          <i className="bi bi-fonts text-[12px] text-cyan-500"></i>
+          Typography
         </label>
         <select
           value={fontFamily}
           onChange={(e) => setFontFamily(e.target.value)}
-          className="w-full text-sm font-medium border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer"
+          className="w-full text-[13px] font-bold uppercase tracking-widest text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 appearance-none shadow-sm cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700/80"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
         >
           {fontOptions.map((font) => (
-            <option key={font.name} value={font.name} style={{ fontFamily: font.style }}>
+            <option key={font.name} value={font.name} style={{ fontFamily: font.style }} className="font-semibold text-sm capitalize tracking-normal">
               {font.name}
             </option>
           ))}

@@ -35,8 +35,8 @@ export const i18n: Dictionary = {
   },
   fr: {
     profile: 'Profil',
-    experience: 'Expérience',
-    education: 'Éducation',
+    experience: 'Parcours Professionnel',
+    education: 'Formation',
     contact: 'Contact',
     certifications: 'Certifications',
     technicalSkills: 'Compétences Techniques',

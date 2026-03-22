@@ -60,7 +60,7 @@ export default function ResumeBuilder() {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="flex flex-col items-center gap-4 animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-xl shadow-indigo-500/20 animate-pulse">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-xl shadow-cyan-500/20 animate-pulse">
             <span className="text-white font-extrabold text-xl tracking-tight">CV</span>
           </div>
           <div className="flex items-center gap-3 text-gray-400">
@@ -76,9 +76,9 @@ export default function ResumeBuilder() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-100 via-gray-50 to-slate-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-950 print:bg-none print:h-auto print:block">
+    <div className="flex flex-col h-screen bg-slate-100 dark:bg-black print:bg-none print:h-auto print:block">
       {/* ── Header ── */}
-      <header className="flex-shrink-0 bg-white/70 dark:bg-gray-900/70 backdrop-blur-2xl border-b border-gray-200/60 dark:border-white/[0.06] px-6 py-3 animate-slide-up print:hidden">
+      <header className="flex-shrink-0 bg-white dark:bg-[#0a0a0a] shadow-md z-20 px-6 py-3 animate-slide-up print:hidden relative border-b border-transparent dark:border-white/[0.05]">
         <div className="flex items-center justify-between max-w-[1920px] mx-auto">
           {/* Brand */}
           <div className="flex items-center gap-3 group cursor-default select-none">
@@ -96,14 +96,14 @@ export default function ResumeBuilder() {
             <button
               type="button"
               onClick={loadExampleData}
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 active:scale-95 transition-all duration-150"
+              className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest rounded-full text-cyan-700 bg-cyan-100 dark:text-cyan-300 dark:bg-cyan-900/50 hover:bg-cyan-200 dark:hover:bg-cyan-800/60 hover:shadow-sm active:scale-95 transition-all duration-200"
             >
               ✨ Fill Example
             </button>
             <button
               type="button"
               onClick={clearAllData}
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/[0.06] active:scale-95 transition-all duration-150"
+              className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 active:scale-95 transition-all duration-200"
             >
               Clear All
             </button>
@@ -111,7 +111,8 @@ export default function ResumeBuilder() {
             <select
               value={cvLang}
               onChange={(e) => setCvLang(e.target.value)}
-              className="text-xs font-medium border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:border-gray-300 dark:hover:border-gray-500 cursor-pointer"
+              className="text-[12px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full px-3 py-2 outline-none border border-transparent focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer appearance-none shadow-sm"
+              style={{ paddingRight: '2rem', backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.25rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
             >
               {languageOptions.map((opt) => (
                 <option key={opt.code} value={opt.code}>
@@ -128,7 +129,7 @@ export default function ResumeBuilder() {
       {/* ── Main ── */}
       <div className="flex flex-1 overflow-hidden print:block print:overflow-visible">
         {/* Left Panel — Forms */}
-        <aside className="w-[440px] flex-shrink-0 overflow-y-auto border-r border-gray-200/60 dark:border-white/[0.06] bg-white/40 dark:bg-gray-900/40 backdrop-blur-xl p-5 animate-stagger space-y-4 print:hidden">
+        <aside className="w-[440px] flex-shrink-0 overflow-y-auto border-r border-slate-200 dark:border-white/[0.05] bg-slate-50 dark:bg-[#0a0a0a] p-5 animate-stagger space-y-4 print:hidden z-10 shadow-xl">
           <TemplateToggle />
           <TextScaleSlider />
           <SpacingSlider />
@@ -179,7 +180,7 @@ export default function ResumeBuilder() {
         </aside>
 
         {/* Right Panel — Preview */}
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-100 via-gray-200 to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-8 print:p-0 print:m-0 print:bg-none print:overflow-visible">
+        <main className="flex-1 overflow-y-auto bg-slate-200 dark:bg-black p-8 print:p-0 print:m-0 print:bg-none print:overflow-visible flex flex-col items-center">
           <style>
             {`
               #cv-preview {
@@ -248,7 +249,7 @@ export default function ResumeBuilder() {
             <div
               id="cv-preview"
               ref={previewRef}
-              className="rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/5 transition-shadow duration-500 hover:shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] print:shadow-none print:ring-0 print:rounded-none"
+              className="rounded-none overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.8)] ring-1 ring-black/5 dark:ring-white/5 transition-shadow duration-500 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9)] print:shadow-none print:ring-0"
               style={{
                 zoom: textScale,
                 '--accent': accentColor,

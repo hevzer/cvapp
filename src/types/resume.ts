@@ -40,13 +40,19 @@ export interface Certification {
   url: string;
 }
 
+export interface TechnicalSkill {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   summary: string;
   experience: Experience[];
   education: Education[];
   certifications: Certification[];
-  technicalSkills: string[];
+  technicalSkills: (TechnicalSkill | string)[];
   softSkills: string[];
   languages: string[];
   hiddenKeywords: string[];

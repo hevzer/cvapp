@@ -16,6 +16,7 @@ export default function TagInput({
   label,
 }: TagInputProps) {
   const [input, setInput] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const addTag = (value: string) => {
     const trimmed = value.trim();
@@ -38,24 +39,27 @@ export default function TagInput({
     }
   };
 
+  const active = isFocused || tags.length > 0 || input.length > 0;
+
   return (
-    <div>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-          {label}
-        </label>
-      )}
-      <div className="flex flex-wrap gap-2 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 min-h-[44px] focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-all">
+    <div className="relative pt-2">
+      <div 
+        className={`flex flex-wrap gap-2 px-3 pb-2.5 pt-4 border-2 rounded-lg bg-transparent min-h-[58px] transition-colors ${
+          isFocused 
+            ? 'border-cyan-600 dark:border-cyan-500' 
+            : 'border-slate-300 dark:border-slate-600'
+        }`}
+      >
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="flex items-center gap-1 px-2.5 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-sm font-medium rounded-md"
+            className="flex items-center gap-1 px-2.5 py-1 bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 text-[13px] font-bold tracking-wide rounded-md"
           >
             {tag}
             <button
               type="button"
               onClick={() => removeTag(index)}
-              className="ml-0.5 text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-200 transition-colors"
+              className="ml-0.5 text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-200 transition-colors"
             >
               ×
             </button>
@@ -66,10 +70,24 @@ export default function TagInput({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={tags.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] outline-none bg-transparent text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder={tags.length === 0 && isFocused ? placeholder : ''}
+          className="flex-1 min-w-[120px] outline-none bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400"
         />
       </div>
+      
+      {label && (
+        <label
+          className={`absolute text-sm font-medium duration-300 transform -translate-y-4 scale-75 top-[1rem] z-10 origin-[0] bg-white dark:bg-slate-800 px-2 start-1 pointer-events-none transition-all ${
+            active 
+              ? 'text-cyan-600 dark:text-cyan-400 top-2 scale-75 -translate-y-4' 
+              : 'text-slate-500 dark:text-slate-400 top-1/2 scale-100 -translate-y-1/2'
+          }`}
+        >
+          {label}
+        </label>
+      )}
     </div>
   );
 }

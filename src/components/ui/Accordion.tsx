@@ -38,22 +38,22 @@ export default function Accordion({
   }, [isOpen]);
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-white/80 dark:bg-white/[0.04] backdrop-blur-lg border border-gray-200/60 dark:border-white/[0.06] shadow-sm shadow-gray-900/[0.04] dark:shadow-none hover:-translate-y-0.5 hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/20 transition-all duration-200 animate-slide-up">
+    <div className="rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-transparent shadow-[0_2px_8px_rgb(0,0,0,0.08)] dark:shadow-none hover:shadow-[0_4px_16px_rgb(0,0,0,0.12)] transition-shadow duration-300">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left group hover:bg-gray-50/60 dark:hover:bg-white/[0.03] active:scale-[0.995] transition-all duration-150"
+        className="w-full flex items-center justify-between px-6 py-4.5 text-left group hover:bg-slate-50 dark:hover:bg-slate-800/80 active:bg-slate-100 dark:active:bg-slate-800 transition-colors duration-200"
       >
-        <span className="flex items-center gap-2.5 font-semibold text-gray-800 dark:text-gray-100">
+        <span className="flex items-center gap-3 font-bold tracking-wide text-[15px] text-slate-800 dark:text-slate-100">
           {icon && (
-            <span className={`text-lg transition-transform duration-300 ${isOpen ? 'scale-110' : 'scale-100'}`}>
+            <span className={`text-xl transition-transform duration-300 ${isOpen ? 'scale-110 text-cyan-600 dark:text-cyan-400' : 'text-slate-500'}`}>
               {icon}
             </span>
           )}
           {title}
         </span>
         <svg
-          className={`w-4.5 h-4.5 text-gray-400 dark:text-gray-500 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-slate-400 transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'rotate-180 text-cyan-500' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -69,7 +69,7 @@ export default function Accordion({
           opacity: isOpen ? 1 : 0,
         }}
       >
-        <div className="px-5 pb-5 pt-1">{children}</div>
+        <div className="px-6 pb-6 pt-2 border-t border-slate-100 dark:border-slate-800">{children}</div>
       </div>
     </div>
   );

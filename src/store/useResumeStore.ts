@@ -8,6 +8,7 @@ import type {
   Experience,
   Education,
   Certification,
+  TechnicalSkill,
   TemplateType,
 } from '@/types/resume';
 import { exampleData } from '@/data/exampleData';
@@ -70,7 +71,10 @@ interface ResumeStore {
   updateCertification: (id: string, data: Partial<Certification>) => void;
 
   // Skills & Languages
-  setTechnicalSkills: (skills: string[]) => void;
+  addTechnicalSkill: () => void;
+  removeTechnicalSkill: (id: string) => void;
+  updateTechnicalSkill: (id: string, data: Partial<TechnicalSkill>) => void;
+  setTechnicalSkills: (skills: (TechnicalSkill | string)[]) => void;
   setSoftSkills: (skills: string[]) => void;
   setLanguages: (languages: string[]) => void;
 
@@ -228,6 +232,37 @@ export const useResumeStore = create<ResumeStore>()(
             ...state.resumeData,
             certifications: state.resumeData.certifications.map((c) =>
               c.id === id ? { ...c, ...data } : c
+            ),
+          },
+        })),
+
+      addTechnicalSkill: () =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            technicalSkills: [
+              ...state.resumeData.technicalSkills,
+              { id: crypto.randomUUID(), name: '', description: '' },
+            ],
+          },
+        })),
+
+      removeTechnicalSkill: (id) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            technicalSkills: state.resumeData.technicalSkills.filter(
+              (skill) => typeof skill === 'string' || skill.id !== id
+            ),
+          },
+        })),
+
+      updateTechnicalSkill: (id, data) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            technicalSkills: state.resumeData.technicalSkills.map((skill) =>
+              typeof skill !== 'string' && skill.id === id ? { ...skill, ...data } : skill
             ),
           },
         })),

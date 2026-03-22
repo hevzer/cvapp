@@ -29,9 +29,9 @@ export default function AboutModal() {
           e.stopPropagation();
           setIsOpen(true);
         }}
-        className="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/[0.06] active:scale-95 transition-all duration-150"
+        className="px-4 py-2 text-[11px] font-bold uppercase tracking-widest rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 active:scale-[0.98] transition-all duration-200"
       >
-        ℹ️ About
+        <span className="flex items-center gap-1.5"><i className="bi bi-info-circle text-[13px]"></i> About</span>
       </button>
 
       {mounted && isOpen && createPortal(
@@ -86,7 +86,7 @@ export default function AboutModal() {
                     href="https://www.gnu.org/licenses/gpl-3.0.en.html"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                    className="text-cyan-600 dark:text-cyan-400 hover:underline font-medium"
                   >
                     GNU General Public License v3.0
                   </a>
@@ -97,7 +97,7 @@ export default function AboutModal() {
             <div className="flex-shrink-0 px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end">
               <button
                 onClick={() => setIsOpen(false)}
-                className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors"
+                className="px-5 py-2 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg shadow-sm transition-colors"
               >
                 Close
               </button>

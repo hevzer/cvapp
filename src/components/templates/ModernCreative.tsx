@@ -54,7 +54,7 @@ export default function ModernCreative() {
   }
 
   return (
-    <div className="bg-white text-gray-900 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] flex">
+    <div className="bg-white text-gray-900 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden flex">
       {/* Left Sidebar */}
       <div className="w-[35%] text-white p-6 flex flex-col" style={{ backgroundColor: 'var(--sidebar, #1e293b)' }}>
         {/* Photo */}
@@ -130,22 +130,13 @@ export default function ModernCreative() {
           </div>
         )}
 
-        {/* Technical Skills */}
-        {technicalSkills.length > 0 && (
+        {/* Profile (Summary) */}
+        {summary && (
           <div className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
-              {i18n[lang].technicalSkills}
+              {i18n[lang].profile}
             </h2>
-            <div className="flex flex-wrap gap-1.5">
-              {technicalSkills.map((skill, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 bg-slate-700 text-slate-200 text-[10px] rounded font-medium"
-                >
-                  {typeof skill === 'string' ? skill : (skill as any).name}
-                </span>
-              ))}
-            </div>
+            <p className="text-slate-300 text-xs leading-relaxed whitespace-pre-wrap">{summary}</p>
           </div>
         )}
 
@@ -196,13 +187,26 @@ export default function ModernCreative() {
             </p>
           </div>
         )}
-        {/* Summary */}
-        {summary && (
+        {/* Technical Skills */}
+        {technicalSkills.length > 0 && (
           <div className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
-              {i18n[lang].profile}
+              {i18n[lang].technicalSkills}
             </h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{summary}</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+              {technicalSkills.map((skill, i) => (
+                <div key={typeof skill === 'string' ? i : (skill as any).id}>
+                  <h3 className="font-bold text-gray-900 text-[13px]">
+                    {typeof skill === 'string' ? skill : (skill as any).name}
+                  </h3>
+                  {typeof skill !== 'string' && (skill as any).description && (
+                    <p className="mt-1 text-gray-700 leading-relaxed whitespace-pre-wrap text-[12px]">
+                      {(skill as any).description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

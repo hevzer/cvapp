@@ -53,7 +53,7 @@ export default function ATSMinimalist() {
   }
 
   return (
-    <div className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm]">
+    <div className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden">
       {/* Header */}
       <div className="text-center pb-4 mb-5" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
         {personalInfo.photoUrl && (
@@ -178,7 +178,7 @@ export default function ATSMinimalist() {
                     <h3 className="font-bold text-gray-900">
                       {cert.name}
                       {cert.url && (
-                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:text-indigo-800 break-all text-xs print:text-gray-900 print:no-underline">
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-cyan-600 hover:text-cyan-800 break-all text-xs print:text-gray-900 print:no-underline">
                           <i className="bi bi-box-arrow-up-right print:hidden"></i>
                           <span className="hidden print:inline"> ({cert.url})</span>
                         </a>

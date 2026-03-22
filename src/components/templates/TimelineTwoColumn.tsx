@@ -291,7 +291,7 @@ export default function TimelineTwoColumn() {
                     <h3 className="font-bold text-slate-900 text-[12.5px]">
                       {cert.name}
                       {cert.url && (
-                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-indigo-600 hover:text-indigo-800 break-all text-xs print:text-gray-900 print:no-underline">
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-cyan-600 hover:text-cyan-800 break-all text-xs print:text-gray-900 print:no-underline">
                           <i className="bi bi-box-arrow-up-right print:hidden"></i>
                           <span className="hidden print:inline"> ({cert.url})</span>
                         </a>

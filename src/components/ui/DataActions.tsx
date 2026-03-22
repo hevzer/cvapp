@@ -41,7 +41,6 @@ export default function DataActions() {
       }
     };
 
-    // Debounce auto-save by 1 second to avoid excessive disk writes
     const timer = setTimeout(autoSave, 1000);
     return () => {
       isMounted = false;
@@ -49,7 +48,6 @@ export default function DataActions() {
     };
   }, [resumeData, fileHandle]);
 
-  // Fallback Export
   const handleLegacyExport = () => {
     const dataStr = JSON.stringify(resumeData, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -63,7 +61,6 @@ export default function DataActions() {
     URL.revokeObjectURL(url);
   };
 
-  // Fallback Import
   const handleLegacyImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -84,7 +81,6 @@ export default function DataActions() {
     e.target.value = '';
   };
 
-  // File System API Open
   const handleOpenFile = async () => {
     try {
       const [handle] = await (window as any).showOpenFilePicker({
@@ -107,7 +103,6 @@ export default function DataActions() {
     }
   };
 
-  // File System API Save As
   const handleSaveAs = async () => {
     try {
       const handle = await (window as any).showSaveFilePicker({
@@ -115,7 +110,6 @@ export default function DataActions() {
         types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
       });
       setFileHandle(handle);
-      // The useEffect will immediately catch the new handle and save the current data
     } catch (err: any) {
       if (err.name !== 'AbortError') {
         console.error(err);
@@ -126,25 +120,25 @@ export default function DataActions() {
 
   if (fileHandle) {
     return (
-      <div className="mb-4 p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-emerald-500/30 shadow-sm animate-scale-in">
-        <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center gap-2 max-w-[75%]">
-            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${saveStatus === 'saving' ? 'bg-amber-500 animate-pulse' : saveStatus === 'error' ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
-            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate" title={fileHandle.name}>
+      <div className="mb-5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-2 max-w-[70%]">
+            <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm ${saveStatus === 'saving' ? 'bg-amber-500 animate-pulse' : saveStatus === 'error' ? 'bg-red-500' : 'bg-green-500'}`}></div>
+            <span className="text-[13px] font-bold tracking-tight text-slate-800 dark:text-slate-200 truncate" title={fileHandle.name}>
               {fileHandle.name}
             </span>
           </div>
-          <button onClick={() => setFileHandle(null)} className="text-[10px] py-1 px-2.5 bg-white dark:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/20 dark:hover:text-red-400 border border-slate-200 dark:border-slate-600 hover:border-red-200 dark:hover:border-red-500/30 transition-all font-semibold shadow-sm">
+          <button onClick={() => setFileHandle(null)} className="text-[10px] py-1.5 px-3 uppercase tracking-widest bg-white dark:bg-slate-700 rounded-full text-slate-600 dark:text-slate-300 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-500/20 dark:hover:text-red-400 border border-slate-200 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-500/30 transition-all font-bold shadow-sm">
             Unlink
           </button>
         </div>
-        <div className="flex items-start gap-2">
-          {saveStatus === 'saving' && <i className="bi bi-cloud-arrow-up text-amber-500 mt-0.5"></i>}
-          {saveStatus === 'error' && <i className="bi bi-exclamation-triangle text-red-500 mt-0.5"></i>}
-          {saveStatus === 'saved' && <i className="bi bi-cloud-check text-emerald-500 mt-0.5"></i>}
-          {saveStatus === 'idle' && <i className="bi bi-cloud-check text-slate-400 mt-0.5"></i>}
-          <p className="text-[10.5px] text-slate-500 dark:text-slate-400 leading-snug">
-            {saveStatus === 'saving' ? 'Streaming changes to disk...' : saveStatus === 'error' ? 'Error saving file! Check permissions.' : 'Live sync active. Changes are streaming directly to your local file.'}
+        <div className="flex items-start gap-3">
+          {saveStatus === 'saving' && <i className="bi bi-cloud-arrow-up text-amber-500 text-lg"></i>}
+          {saveStatus === 'error' && <i className="bi bi-exclamation-triangle text-red-500 text-lg"></i>}
+          {saveStatus === 'saved' && <i className="bi bi-cloud-check text-green-500 text-lg"></i>}
+          {saveStatus === 'idle' && <i className="bi bi-cloud-check text-slate-400 text-lg"></i>}
+          <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-snug mt-0.5">
+            {saveStatus === 'saving' ? 'Streaming changes to disk...' : saveStatus === 'error' ? 'Error saving file! Check permissions.' : 'Live sync active. Changes stream directly to disk.'}
           </p>
         </div>
       </div>
@@ -152,7 +146,7 @@ export default function DataActions() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2 mb-4">
+    <div className="grid grid-cols-2 gap-3 mb-5">
       <input
         ref={fileRef}
         type="file"
@@ -163,23 +157,23 @@ export default function DataActions() {
       <button
         type="button"
         onClick={isSupported ? handleSaveAs : handleLegacyExport}
-        className="group flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all hover:shadow-md border border-slate-200 dark:border-slate-700/50 hover:border-indigo-300 dark:hover:border-indigo-500/30"
+        className="group flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 hover:shadow-md dark:hover:bg-cyan-900/50 transition-all active:scale-[0.98] border border-transparent hover:border-cyan-200 dark:hover:border-cyan-500/30"
       >
-        <svg className="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        <svg className="w-6 h-6 text-cyan-600 dark:text-cyan-400 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
-        <span className="text-[10px] font-bold uppercase tracking-wider">{isSupported ? 'Save As...' : 'Save Data'}</span>
+        <span className="text-[11px] font-extrabold uppercase tracking-widest">{isSupported ? 'Save As...' : 'Save Data'}</span>
       </button>
 
       <button
         type="button"
         onClick={isSupported ? handleOpenFile : () => fileRef.current?.click()}
-        className="group flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all hover:shadow-md border border-slate-200 dark:border-slate-700/50 hover:border-emerald-300 dark:hover:border-emerald-500/30"
+        className="group flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 hover:shadow-md dark:hover:bg-emerald-900/40 transition-all active:scale-[0.98] border border-transparent hover:border-emerald-200 dark:hover:border-emerald-500/30"
       >
-        <svg className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
         </svg>
-        <span className="text-[10px] font-bold uppercase tracking-wider">{isSupported ? 'Open File' : 'Load Data'}</span>
+        <span className="text-[11px] font-extrabold uppercase tracking-widest">{isSupported ? 'Open File' : 'Load Data'}</span>
       </button>
     </div>
   );
