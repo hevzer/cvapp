@@ -1,5 +1,3 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 import MaterialInput from '@/components/ui/MaterialInput';
 import MaterialTextarea from '@/components/ui/MaterialTextarea';

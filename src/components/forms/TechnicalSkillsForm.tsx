@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';

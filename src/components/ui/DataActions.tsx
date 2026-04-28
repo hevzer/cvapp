@@ -1,20 +1,25 @@
-'use client';
-
 import { useRef, useState, useEffect } from 'react';
 import { useResumeStore } from '../../store/useResumeStore';
+
+type WritableFileHandle = {
+  name: string;
+  getFile: () => Promise<File>;
+  createWritable: () => Promise<{ write: (data: string) => Promise<void>; close: () => Promise<void> }>;
+};
+
+type FilePickerWindow = Window & {
+  showOpenFilePicker?: (options: { types: { description: string; accept: Record<string, string[]> }[] }) => Promise<WritableFileHandle[]>;
+  showSaveFilePicker?: (options: { suggestedName: string; types: { description: string; accept: Record<string, string[]> }[] }) => Promise<WritableFileHandle>;
+};
 
 export default function DataActions() {
   const resumeData = useResumeStore((s) => s.resumeData);
   const setResumeData = useResumeStore((s) => s.setResumeData);
   const fileRef = useRef<HTMLInputElement>(null);
-  
-  const [fileHandle, setFileHandle] = useState<any>(null); // FileSystemFileHandle
-  const [isSupported, setIsSupported] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-  useEffect(() => {
-    setIsSupported(typeof window !== 'undefined' && 'showOpenFilePicker' in window);
-  }, []);
+  const [fileHandle, setFileHandle] = useState<WritableFileHandle | null>(null);
+  const [isSupported] = useState(() => 'showOpenFilePicker' in window);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Auto-save effect
   useEffect(() => {
@@ -83,7 +88,9 @@ export default function DataActions() {
 
   const handleOpenFile = async () => {
     try {
-      const [handle] = await (window as any).showOpenFilePicker({
+      const picker = (window as FilePickerWindow).showOpenFilePicker;
+      if (!picker) return;
+      const [handle] = await picker({
         types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
       });
       const file = await handle.getFile();
@@ -95,8 +102,8 @@ export default function DataActions() {
       } else {
         alert('Invalid CV data file.');
       }
-    } catch (err: any) {
-      if (err.name !== 'AbortError') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
         console.error(err);
         alert('Failed to open file.');
       }
@@ -105,13 +112,15 @@ export default function DataActions() {
 
   const handleSaveAs = async () => {
     try {
-      const handle = await (window as any).showSaveFilePicker({
+      const picker = (window as FilePickerWindow).showSaveFilePicker;
+      if (!picker) return;
+      const handle = await picker({
         suggestedName: `cvapp-data-${new Date().toISOString().split('T')[0]}.json`,
         types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
       });
       setFileHandle(handle);
-    } catch (err: any) {
-      if (err.name !== 'AbortError') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
         console.error(err);
         alert('Failed to link file.');
       }

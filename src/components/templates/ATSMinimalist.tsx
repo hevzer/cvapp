@@ -1,7 +1,6 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import type { PersonalInfo } from '@/types/resume';
 
 function formatDate(date: string, lang: string) {
   if (!date) return '';
@@ -10,14 +9,14 @@ function formatDate(date: string, lang: string) {
   try {
     const d = new Date(parseInt(year), parseInt(month) - 1);
     return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch (e) {
+  } catch {
     return `${month}/${year}`;
   }
 }
 
 export default function ATSMinimalist() {
   const resume = useResumeStore((s) => s.resumeData);
-  const personalInfo = resume.personalInfo || ({} as any);
+  const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
@@ -202,7 +201,7 @@ export default function ATSMinimalist() {
           <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].technicalSkills}
           </h2>
-          <p className="text-gray-700">{technicalSkills.map(s => typeof s === 'string' ? s : (s as any).name).join(' • ')}</p>
+          <p className="text-gray-700">{technicalSkills.map(s => typeof s === 'string' ? s : s.name).join(' • ')}</p>
         </div>
       )}
 
@@ -212,7 +211,7 @@ export default function ATSMinimalist() {
           <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].softSkills}
           </h2>
-          <p className="text-gray-700">{softSkills.map(s => typeof s === 'string' ? s : (s as any).name).join(' • ')}</p>
+          <p className="text-gray-700">{softSkills.map(s => typeof s === 'string' ? s : (s as { name: string }).name).join(' • ')}</p>
         </div>
       )}
 
@@ -222,7 +221,11 @@ export default function ATSMinimalist() {
           <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
             {i18n[lang].languages}
           </h2>
-          <p className="text-gray-700">{languages.map(l => typeof l === 'string' ? l : `${(l as any).name}${ (l as any).level ? ` (${(l as any).level})` : '' }`).join(' • ')}</p>
+          <p className="text-gray-700">{languages.map(l => {
+            if (typeof l === 'string') return l;
+            const o = l as { name: string; level?: string };
+            return `${o.name}${o.level ? ` (${o.level})` : ''}`;
+          }).join(' • ')}</p>
         </div>
       )}
 

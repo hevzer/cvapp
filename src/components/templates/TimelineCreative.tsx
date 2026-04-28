@@ -1,7 +1,6 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import type { PersonalInfo } from '@/types/resume';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function formatDate(date: string, lang: string) {
@@ -11,14 +10,14 @@ function formatDate(date: string, lang: string) {
   try {
     const d = new Date(parseInt(year), parseInt(month) - 1);
     return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch (e) {
+  } catch {
     return `${month}/${year}`;
   }
 }
 
 export default function TimelineCreative() {
   const resume = useResumeStore((s) => s.resumeData);
-  const personalInfo = resume.personalInfo || ({} as any);
+  const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
@@ -148,7 +147,7 @@ export default function TimelineCreative() {
                 {i18n[lang].experience}
               </h2>
               <div className="relative ml-2.5 space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #e0e7ff)' }}>
-                {experience.map((exp, i) => (
+                {experience.map((exp) => (
                   <div key={exp.id} className="relative pl-5">
                     {/* Timeline Dot */}
                     <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
@@ -268,7 +267,7 @@ export default function TimelineCreative() {
                     key={i}
                     className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-[11px] rounded font-medium border border-gray-200 dark:border-gray-700"
                   >
-                    {typeof skill === 'string' ? skill : (skill as any).name}
+                    {typeof skill === 'string' ? skill : skill.name}
                   </span>
                 ))}
               </div>
@@ -284,7 +283,7 @@ export default function TimelineCreative() {
                 {softSkills.map((skill, i) => (
                   <li key={i} className="text-[11px] text-slate-700 flex items-center gap-1.5">
                     <i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i>
-                    {typeof skill === 'string' ? skill : (skill as any).name}
+                    {typeof skill === 'string' ? skill : (skill as { name: string }).name}
                   </li>
                 ))}
               </ul>

@@ -8,12 +8,14 @@ This file, `AGENTS.md`, serves as a permanent architectural and historical recor
 Because it operates entirely without a backend API, all state is handled natively through Zustand localStorage persistence, and all PDF generation relies purely on the browser's native `window.print()` engine scaling through CSS `@media print` utilities.
 
 ## Technology Stack
-- **Framework**: Next.js 16 (App Router pattern) + `vinext` for high-performance builds
+- **Framework**: Vite 8 + React 19 (single-page application, no SSR)
+- **Entry points**: `index.html` (root) → `src/main.tsx` (mounts `<ResumeBuilder />` into `#root`)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 (with dark mode and print variant support)
+- **Styling**: Tailwind CSS v4 via `@tailwindcss/postcss` (Vite auto-loads `postcss.config.mjs`) with dark mode and print variant support
 - **State Management**: Zustand (with Persist middleware)
-- **Icons**: Bootstrap Icons (via CDN/SVG)
-- **Installability**: Progressive Web App (PWA) configured via Web Manifest and Service Worker interceptors.
+- **Icons**: Bootstrap Icons — CSS imported via ES module (`import 'bootstrap-icons/font/bootstrap-icons.css'`) in templates that use it
+- **Fonts**: Google Fonts loaded via `<link>` in `index.html` (Inter, Roboto, Outfit, Lora, Merriweather). `--font-sans: "Inter", system-ui, sans-serif` in `src/globals.css`.
+- **Installability**: Progressive Web App. `public/manifest.json` is referenced from `index.html`; `public/sw.js` is registered from `src/main.tsx` on window `load`.
 
 ## Key Technical Decisions & Quirks
 
@@ -54,8 +56,11 @@ Key state fields:
 
 ## Maintenance Commands
 ```bash
-bun run dev    # Start vinext development server
-bun run build  # Production build
-bun run start  # Start production server
-bun update     # Increment safe dependency versions
+bun run dev      # Start Vite dev server (default: http://localhost:5173)
+bun run build    # Type-check (tsc --noEmit) then build to dist/
+bun run preview  # Serve the production build locally
+bun run lint     # ESLint (flat config: typescript-eslint + react-hooks)
+bun update       # Increment safe dependency versions
 ```
+
+Deploy the contents of `dist/` to any static host (Cloudflare Pages, Netlify, GitHub Pages, S3+CF, etc.). No server runtime required.

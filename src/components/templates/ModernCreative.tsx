@@ -1,7 +1,6 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import type { PersonalInfo } from '@/types/resume';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function formatDate(date: string, lang: string) {
@@ -11,14 +10,14 @@ function formatDate(date: string, lang: string) {
   try {
     const d = new Date(parseInt(year), parseInt(month) - 1);
     return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch (e) {
+  } catch {
     return `${month}/${year}`;
   }
 }
 
 export default function ModernCreative() {
   const resume = useResumeStore((s) => s.resumeData);
-  const personalInfo = resume.personalInfo || ({} as any);
+  const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
@@ -150,7 +149,7 @@ export default function ModernCreative() {
               {softSkills.map((skill, i) => (
                 <li key={i} className="text-xs text-slate-300 flex items-center gap-2">
                   <i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i>
-                  {typeof skill === 'string' ? skill : (skill as any).name}
+                  {typeof skill === 'string' ? skill : (skill as { name: string }).name}
                 </li>
               ))}
             </ul>
@@ -164,14 +163,22 @@ export default function ModernCreative() {
               {i18n[lang].languages}
             </h2>
             <div className="flex flex-wrap gap-1.5">
-              {languages.map((l, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
-                >
-                  {typeof l === 'string' ? l : `${(l as any).name}${ (l as any).level ? ` (${(l as any).level})` : '' }`}
-                </span>
-              ))}
+              {languages.map((l, i) => {
+                const display = typeof l === 'string'
+                  ? l
+                  : (() => {
+                      const o = l as { name: string; level?: string };
+                      return `${o.name}${o.level ? ` (${o.level})` : ''}`;
+                    })();
+                return (
+                  <span
+                    key={i}
+                    className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
+                  >
+                    {display}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
@@ -195,13 +202,13 @@ export default function ModernCreative() {
             </h2>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
               {technicalSkills.map((skill, i) => (
-                <div key={typeof skill === 'string' ? i : (skill as any).id}>
+                <div key={typeof skill === 'string' ? i : skill.id}>
                   <h3 className="font-bold text-gray-900 text-[13px]">
-                    {typeof skill === 'string' ? skill : (skill as any).name}
+                    {typeof skill === 'string' ? skill : skill.name}
                   </h3>
-                  {typeof skill !== 'string' && (skill as any).description && (
+                  {typeof skill !== 'string' && skill.description && (
                     <p className="mt-1 text-gray-700 leading-relaxed whitespace-pre-wrap text-[12px]">
-                      {(skill as any).description}
+                      {skill.description}
                     </p>
                   )}
                 </div>

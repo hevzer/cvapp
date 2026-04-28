@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 
 interface AccordionProps {

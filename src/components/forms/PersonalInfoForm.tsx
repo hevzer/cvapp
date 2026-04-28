@@ -1,5 +1,3 @@
-'use client';
-
 import { useRef } from 'react';
 import { useResumeStore } from '@/store/useResumeStore';
 import MaterialInput from '@/components/ui/MaterialInput';

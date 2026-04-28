@@ -1,5 +1,3 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 
 export default function DarkModeToggle() {

@@ -1,11 +1,9 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const technologies = [
-  { name: 'Next.js', description: 'React framework for the UI and routing' },
-  { name: 'Vinext', description: 'Fast build tool and compiler wrapper' },
+  { name: 'React', description: 'Component-based library for the UI' },
+  { name: 'Vite', description: 'Fast build tool and dev server' },
   { name: 'Tailwind CSS', description: 'Utility-first CSS framework for styling' },
   { name: 'Zustand', description: 'Lightweight state management with localStorage persistence' },
   { name: 'TypeScript', description: 'Static typing for robust code' },
@@ -14,11 +12,6 @@ const technologies = [
 
 export default function AboutModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
@@ -34,7 +27,7 @@ export default function AboutModal() {
         <span className="flex items-center gap-1.5"><i className="bi bi-info-circle text-[13px]"></i> About</span>
       </button>
 
-      {mounted && isOpen && createPortal(
+      {isOpen && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-fade-in print:hidden">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden animate-slide-up border border-gray-200 dark:border-gray-700">
             <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">

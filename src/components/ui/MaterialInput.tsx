@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 
 interface MaterialInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -7,7 +5,8 @@ interface MaterialInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export default function MaterialInput({ label, className, id, ...props }: MaterialInputProps) {
-  const inputId = id || React.useId();
+  const generatedId = React.useId();
+  const inputId = id || generatedId;
   
   return (
     <div className={`relative ${className || ''}`}>

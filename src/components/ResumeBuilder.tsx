@@ -1,6 +1,4 @@
-'use client';
-
-import { useRef, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useResumeStore } from '../store/useResumeStore';
 import Accordion from './ui/Accordion';
 import TemplateToggle from './ui/TemplateToggle';
@@ -35,18 +33,12 @@ export default function ResumeBuilder() {
   const darkMode = useResumeStore((s) => s.darkMode);
   const cvLang = getSafeLanguage(useResumeStore((s) => s.resumeData.cvLanguage));
   const setCvLang = useResumeStore((s) => s.setCvLanguage);
-  const previewRef = useRef<HTMLDivElement>(null);
   const textScale = useResumeStore((s) => s.textScale);
   const spacingScale = useResumeStore((s) => s.spacingScale);
   const fontScale = useResumeStore((s) => s.fontScale);
   const accentColor = useResumeStore((s) => s.accentColor);
   const sidebarColor = useResumeStore((s) => s.sidebarColor);
   const fontFamily = useResumeStore((s) => s.fontFamily);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -55,25 +47,6 @@ export default function ResumeBuilder() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  if (!hydrated) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-        <div className="flex flex-col items-center gap-4 animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-xl shadow-cyan-500/20 animate-pulse">
-            <span className="text-white font-extrabold text-xl tracking-tight">CV</span>
-          </div>
-          <div className="flex items-center gap-3 text-gray-400">
-            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12h4z" />
-            </svg>
-            <span className="text-sm font-medium tracking-wide">Loading CVapp…</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-100 dark:bg-black print:bg-none print:h-auto print:block">
@@ -175,7 +148,7 @@ export default function ResumeBuilder() {
 
           <div className="pt-2">
             <DataActions />
-            <ExportButton targetRef={previewRef} />
+            <ExportButton />
           </div>
         </aside>
 
@@ -248,7 +221,6 @@ export default function ResumeBuilder() {
           <div className="max-w-[900px] mx-auto animate-scale-in print:max-w-none print:mx-0 print:animate-none">
             <div
               id="cv-preview"
-              ref={previewRef}
               className="rounded-none overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.8)] ring-1 ring-black/5 dark:ring-white/5 transition-shadow duration-500 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9)] print:shadow-none print:ring-0"
               style={{
                 zoom: textScale,

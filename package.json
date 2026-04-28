@@ -2,36 +2,34 @@
   "name": "cvapp",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
-    "start": "vinext start",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
     "lint": "eslint"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1",
     "jszip": "^3.10.1",
-    "next": "16.1.7",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.29.1",
-    "@tailwindcss/postcss": "^4.2.1",
-    "@types/node": "^20.19.37",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/postcss": "^4.2.4",
+    "@types/node": "^22.19.17",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitejs/plugin-rsc": "^0.5.21",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "16.1.7",
-    "react-server-dom-webpack": "^19.2.4",
-    "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3",
-    "vinext": "^0.0.31",
-    "vite": "^8.0.0",
-    "wrangler": "^4.75.0"
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.5.0",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.1",
+    "vite": "^8.0.10"
   },
   "ignoreScripts": [
     "sharp",
@@ -40,6 +38,5 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ],
-  "type": "module"
+  ]
 }

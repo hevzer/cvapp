@@ -1,7 +1,6 @@
-'use client';
-
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import type { PersonalInfo } from '@/types/resume';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function formatDate(date: string, lang: string) {
@@ -11,14 +10,14 @@ function formatDate(date: string, lang: string) {
   try {
     const d = new Date(parseInt(year), parseInt(month) - 1);
     return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch (e) {
+  } catch {
     return `${month}/${year}`;
   }
 }
 
 export default function TimelineTwoColumn() {
   const resume = useResumeStore((s) => s.resumeData);
-  const personalInfo = resume.personalInfo || ({} as any);
+  const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
@@ -155,7 +154,7 @@ export default function TimelineTwoColumn() {
                   key={i}
                   className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 text-slate-200 text-[10px] rounded font-medium"
                 >
-                  {typeof skill === 'string' ? skill : (skill as any).name}
+                  {typeof skill === 'string' ? skill : skill.name}
                 </span>
               ))}
             </div>
@@ -172,7 +171,7 @@ export default function TimelineTwoColumn() {
               {softSkills.map((skill, i) => (
                 <li key={i} className="text-[11px] text-slate-300 flex items-center gap-1.5">
                   <i className="bi bi-check-circle-fill text-[9px]" style={{ color: 'var(--accent, #6366f1)' }}></i>
-                  {typeof skill === 'string' ? skill : (skill as any).name}
+                  {typeof skill === 'string' ? skill : (skill as { name: string }).name}
                 </li>
               ))}
             </ul>
@@ -186,14 +185,20 @@ export default function TimelineTwoColumn() {
               {i18n[lang].languages}
             </h2>
             <div className="flex flex-col gap-1">
-              {languages.map((l, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-slate-300">
-                  <i className="bi bi-chat-left-text-fill text-[9px]" style={{ color: 'var(--accent, #6366f1)' }}></i>
-                  <span className="text-[11px] font-medium">
-                    {typeof l === 'string' ? l : `${(l as any).name}${ (l as any).level ? ` (${(l as any).level})` : '' }`}
-                  </span>
-                </div>
-              ))}
+              {languages.map((l, i) => {
+                const display = typeof l === 'string'
+                  ? l
+                  : (() => {
+                      const o = l as { name: string; level?: string };
+                      return `${o.name}${o.level ? ` (${o.level})` : ''}`;
+                    })();
+                return (
+                  <div key={i} className="flex items-center gap-1.5 text-slate-300">
+                    <i className="bi bi-chat-left-text-fill text-[9px]" style={{ color: 'var(--accent, #6366f1)' }}></i>
+                    <span className="text-[11px] font-medium">{display}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
