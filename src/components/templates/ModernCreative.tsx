@@ -21,10 +21,12 @@ export default function ModernCreative() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const volunteering = resume.volunteering || [];
   const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
+  const interests = resume.interests || [];
   const hiddenKeywords = resume.hiddenKeywords || [];
   const cvLanguage = resume.cvLanguage;
   
@@ -34,11 +36,13 @@ export default function ModernCreative() {
     personalInfo.fullName ||
     summary ||
     experience.length > 0 ||
+    volunteering.length > 0 ||
     education.length > 0 ||
     certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
-    languages.length > 0;
+    languages.length > 0 ||
+    interests.length > 0;
 
   if (!hasContent) {
     return (
@@ -177,6 +181,53 @@ export default function ModernCreative() {
                   >
                     {display}
                   </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Volunteering (compact, sidebar) */}
+        {volunteering.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
+              {i18n[lang].volunteering}
+            </h2>
+            <div className="space-y-3">
+              {volunteering.map((v) => (
+                <div key={v.id}>
+                  <h3 className="text-[12px] font-bold text-slate-100 leading-tight">{v.role}</h3>
+                  <p className="text-[11px] text-slate-300 font-medium">{v.organization}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {formatDate(v.startDate, lang)}
+                    {(v.startDate || v.endDate || v.current) && ' — '}
+                    {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
+                  </p>
+                  {v.description && (
+                    <p className="text-[10.5px] text-slate-300 leading-snug mt-1 whitespace-pre-wrap">{v.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Interests */}
+        {interests.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
+              {i18n[lang].interests}
+            </h2>
+            <div className="space-y-2">
+              {interests.map((it, i) => {
+                const o = typeof it === 'string' ? { id: String(i), name: it, description: '' } : it;
+                return (
+                  <div key={o.id}>
+                    <h3 className="text-[12px] font-bold text-slate-100 leading-tight">{o.name}</h3>
+                    {o.description && (
+                      <p className="text-[10.5px] text-slate-300 leading-snug mt-0.5 whitespace-pre-wrap">{o.description}</p>
+                    )}
+                  </div>
                 );
               })}
             </div>

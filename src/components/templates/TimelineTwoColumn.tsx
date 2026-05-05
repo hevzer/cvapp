@@ -21,10 +21,12 @@ export default function TimelineTwoColumn() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const volunteering = resume.volunteering || [];
   const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
+  const interests = resume.interests || [];
   const hiddenKeywords = resume.hiddenKeywords || [];
   const cvLanguage = resume.cvLanguage;
 
@@ -34,11 +36,13 @@ export default function TimelineTwoColumn() {
     personalInfo.fullName ||
     summary ||
     experience.length > 0 ||
+    volunteering.length > 0 ||
     education.length > 0 ||
     certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
-    languages.length > 0;
+    languages.length > 0 ||
+    interests.length > 0;
 
   if (!hasContent) {
     return (
@@ -202,6 +206,28 @@ export default function TimelineTwoColumn() {
             </div>
           </div>
         )}
+
+        {/* Interests */}
+        {interests.length > 0 && (
+          <div className="mb-5">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2.5 border-b border-slate-700 pb-1">
+              {i18n[lang].interests}
+            </h2>
+            <div className="space-y-2">
+              {interests.map((it, i) => {
+                const o = typeof it === 'string' ? { id: String(i), name: it, description: '' } : it;
+                return (
+                  <div key={o.id}>
+                    <h3 className="text-[11px] font-bold text-slate-100 leading-tight">{o.name}</h3>
+                    {o.description && (
+                      <p className="text-[10px] text-slate-300 leading-snug mt-0.5 whitespace-pre-wrap">{o.description}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right Main Content */}
@@ -242,6 +268,37 @@ export default function TimelineTwoColumn() {
                   </div>
                   {exp.description && (
                     <p className="text-slate-600 text-[11px] leading-snug mt-1 whitespace-pre-wrap">{exp.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Volunteering Timeline */}
+        {volunteering.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-3.5 flex items-center gap-2">
+              <div className="w-5 h-[2px]" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+              {i18n[lang].volunteering}
+            </h2>
+            <div className="relative ml-[5px] space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #c7d2fe)' }}>
+              {volunteering.map((v) => (
+                <div key={v.id} className="relative pl-5">
+                  <div className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+                  <div className="flex flex-col gap-0.5 mb-1">
+                    <h3 className="font-bold text-slate-900 text-[12.5px]">{v.role}</h3>
+                    <div className="flex justify-between items-center pr-2">
+                      <span className="font-semibold text-[11.5px]" style={{ color: 'var(--accent, #6366f1)' }}>{v.organization}</span>
+                      <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                        {formatDate(v.startDate, lang)}
+                        {(v.startDate || v.endDate || v.current) && ' — '}
+                        {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
+                      </span>
+                    </div>
+                  </div>
+                  {v.description && (
+                    <p className="text-slate-600 text-[11px] leading-snug mt-1 whitespace-pre-wrap">{v.description}</p>
                   )}
                 </div>
               ))}

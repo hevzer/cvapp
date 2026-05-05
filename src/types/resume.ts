@@ -46,15 +46,33 @@ export interface TechnicalSkill {
   description: string;
 }
 
+export interface Volunteering {
+  id: string;
+  organization: string;
+  role: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description: string;
+}
+
+export interface Interest {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo;
   summary: string;
   experience: Experience[];
+  volunteering: Volunteering[];
   education: Education[];
   certifications: Certification[];
   technicalSkills: (TechnicalSkill | string)[];
   softSkills: string[];
   languages: string[];
+  interests: (Interest | string)[];
   hiddenKeywords: string[];
   cvLanguage: string;
 }

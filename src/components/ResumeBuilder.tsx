@@ -10,12 +10,14 @@ import DarkModeToggle from './ui/DarkModeToggle';
 import PersonalInfoForm from './forms/PersonalInfoForm';
 import SummaryForm from './forms/SummaryForm';
 import ExperienceForm from './forms/ExperienceForm';
+import VolunteeringForm from './forms/VolunteeringForm';
 import AboutModal from './AboutModal';
 import EducationForm from './forms/EducationForm';
 import CertificationsForm from './forms/CertificationsForm';
 import TechnicalSkillsForm from './forms/TechnicalSkillsForm';
 import SoftSkillsForm from './forms/SoftSkillsForm';
 import LanguagesForm from './forms/LanguagesForm';
+import InterestsForm from './forms/InterestsForm';
 import HiddenKeywordsForm from './forms/HiddenKeywordsForm';
 import { i18n, getSafeLanguage, languageOptions } from '../lib/i18n';
 import ATSMinimalist from './templates/ATSMinimalist';
@@ -122,6 +124,10 @@ export default function ResumeBuilder() {
             <ExperienceForm />
           </Accordion>
 
+          <Accordion title={i18n[cvLang].volunteering} icon="🤝">
+            <VolunteeringForm />
+          </Accordion>
+
           <Accordion title={i18n[cvLang].education} icon="🎓">
             <EducationForm />
           </Accordion>
@@ -140,6 +146,10 @@ export default function ResumeBuilder() {
 
           <Accordion title={i18n[cvLang].languages} icon="🌍">
             <LanguagesForm />
+          </Accordion>
+
+          <Accordion title={i18n[cvLang].interests} icon="🎨">
+            <InterestsForm />
           </Accordion>
 
           <Accordion title="ATS Hidden Keywords" icon="🔍">

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
 import { TechnicalSkill } from '@/types/resume';
@@ -10,23 +9,9 @@ export default function TechnicalSkillsForm() {
   const addTechnicalSkill = useResumeStore((s) => s.addTechnicalSkill);
   const removeTechnicalSkill = useResumeStore((s) => s.removeTechnicalSkill);
   const updateTechnicalSkill = useResumeStore((s) => s.updateTechnicalSkill);
-  const setTechnicalSkills = useResumeStore((s) => s.setTechnicalSkills);
   const cvLanguage = getSafeLanguage(useResumeStore((s) => s.resumeData.cvLanguage));
 
-  // Auto-migrate any legacy string skills into fully qualified objects natively in the store
-  useEffect(() => {
-    if (technicalSkills.some((skill) => typeof skill === 'string')) {
-      const converted = technicalSkills.map((skill) => {
-        if (typeof skill === 'string') {
-          return { id: crypto.randomUUID(), name: skill, description: '' } as TechnicalSkill;
-        }
-        return skill;
-      });
-      setTechnicalSkills(converted);
-    }
-  }, [technicalSkills, setTechnicalSkills]);
-
-  // Guaranteed to only operate on objects after migration flush
+  // Migration to objects happens at the store boundary (setResumeData / loadExampleData / importLinkedInData / onRehydrateStorage), so by here every entry is a TechnicalSkill object.
   const normalizedSkills = technicalSkills as TechnicalSkill[];
 
   return (

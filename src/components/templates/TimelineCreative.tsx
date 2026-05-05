@@ -21,10 +21,12 @@ export default function TimelineCreative() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const volunteering = resume.volunteering || [];
   const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
+  const interests = resume.interests || [];
   const hiddenKeywords = resume.hiddenKeywords || [];
   const cvLanguage = resume.cvLanguage;
 
@@ -34,11 +36,13 @@ export default function TimelineCreative() {
     personalInfo.fullName ||
     summary ||
     experience.length > 0 ||
+    volunteering.length > 0 ||
     education.length > 0 ||
     certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
-    languages.length > 0;
+    languages.length > 0 ||
+    interests.length > 0;
 
   if (!hasContent) {
     return (
@@ -165,6 +169,36 @@ export default function TimelineCreative() {
                     </div>
                     {exp.description && (
                       <p className="text-slate-600 text-[11px] leading-[1.5] mt-1 whitespace-pre-wrap">{exp.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {volunteering.length > 0 && (
+            <div className="mb-5">
+              <h2 className="text-[11.5px] font-bold text-slate-900 uppercase tracking-widest mb-2.5 flex items-center gap-2">
+                <i className="bi bi-heart-fill" style={{ color: 'var(--accent, #6366f1)' }}></i>
+                {i18n[lang].volunteering}
+              </h2>
+              <div className="relative ml-2.5 space-y-4" style={{ borderLeft: '2px solid var(--accent-light, #e0e7ff)' }}>
+                {volunteering.map((v) => (
+                  <div key={v.id} className="relative pl-5">
+                    <div className="absolute -left-[5.5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: 'var(--accent, #6366f1)' }}></div>
+                    <div className="mb-1">
+                      <h3 className="text-[12px] font-bold text-slate-900">{v.role}</h3>
+                      <div className="flex justify-between items-center mt-0.5">
+                        <span className="font-semibold text-[11px]" style={{ color: 'var(--accent, #6366f1)' }}>{v.organization}</span>
+                        <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">
+                          {formatDate(v.startDate, lang)}
+                          {(v.startDate || v.endDate || v.current) && ' — '}
+                          {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
+                        </span>
+                      </div>
+                    </div>
+                    {v.description && (
+                      <p className="text-slate-600 text-[11px] leading-[1.5] mt-1 whitespace-pre-wrap">{v.description}</p>
                     )}
                   </div>
                 ))}
@@ -302,6 +336,27 @@ export default function TimelineCreative() {
                     <span className="text-[11px] text-slate-700 font-medium">{langItem}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {interests.length > 0 && (
+            <div>
+              <h2 className="text-[11px] font-bold text-slate-900 uppercase tracking-widest mb-2 border-b-2 border-slate-200 pb-1.5">
+                {i18n[lang].interests}
+              </h2>
+              <div className="space-y-1.5">
+                {interests.map((it, i) => {
+                  const o = typeof it === 'string' ? { id: String(i), name: it, description: '' } : it;
+                  return (
+                    <div key={o.id}>
+                      <h3 className="text-[11.5px] font-bold text-slate-900">{o.name}</h3>
+                      {o.description && (
+                        <p className="text-[10.5px] text-slate-600 leading-snug mt-0.5 whitespace-pre-wrap">{o.description}</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

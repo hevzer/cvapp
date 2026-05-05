@@ -60,6 +60,18 @@ export const exampleData: ResumeData = {
         'Graduated with honors. Focus on distributed systems and machine learning. Teaching assistant for Data Structures & Algorithms.',
     },
   ],
+  volunteering: [
+    {
+      id: '1',
+      organization: 'Code for America',
+      role: 'Volunteer Software Developer',
+      startDate: '2020-01',
+      endDate: '',
+      current: true,
+      description:
+        'Contribute to civic-tech projects helping local governments modernize public services. Focus on accessibility audits and React component libraries reused across municipal apps.',
+    },
+  ],
   certifications: [
     {
       id: '1',
@@ -93,6 +105,28 @@ export const exampleData: ResumeData = {
     'English (Native)',
     'Spanish (Professional)',
     'Mandarin (Basic)',
+  ],
+  interests: [
+    {
+      id: '1',
+      name: 'Photography',
+      description: 'Street and architectural photography. Maintain a portfolio of black-and-white work shot on a Fujifilm X-T5.',
+    },
+    {
+      id: '2',
+      name: 'Trail running',
+      description: 'Train year-round in the Marin Headlands. Completed two 50K ultra-marathons.',
+    },
+    {
+      id: '3',
+      name: 'Open-source contribution',
+      description: 'Active maintainer of small TypeScript utility libraries; occasional PRs to React ecosystem tools.',
+    },
+    {
+      id: '4',
+      name: 'Chess',
+      description: 'Online rapid rating ~1900. Enjoy studying classical endgames.',
+    },
   ],
   hiddenKeywords: [],
   cvLanguage: 'en',

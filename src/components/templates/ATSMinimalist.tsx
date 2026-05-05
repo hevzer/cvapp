@@ -20,10 +20,12 @@ export default function ATSMinimalist() {
   const summary = resume.summary || '';
   const experience = resume.experience || [];
   const education = resume.education || [];
+  const volunteering = resume.volunteering || [];
   const certifications = resume.certifications || [];
   const technicalSkills = resume.technicalSkills || [];
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
+  const interests = resume.interests || [];
   const hiddenKeywords = resume.hiddenKeywords || [];
   const cvLanguage = resume.cvLanguage;
 
@@ -33,11 +35,13 @@ export default function ATSMinimalist() {
     personalInfo.fullName ||
     summary ||
     experience.length > 0 ||
+    volunteering.length > 0 ||
     education.length > 0 ||
     certifications.length > 0 ||
     technicalSkills.length > 0 ||
     softSkills.length > 0 ||
-    languages.length > 0;
+    languages.length > 0 ||
+    interests.length > 0;
 
   if (!hasContent) {
     return (
@@ -126,6 +130,35 @@ export default function ATSMinimalist() {
                 </div>
                 {exp.description && (
                   <p className="mt-1.5 text-gray-700 leading-relaxed whitespace-pre-wrap">{exp.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Volunteering */}
+      {volunteering.length > 0 && (
+        <div className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+            {i18n[lang].volunteering}
+          </h2>
+          <div className="space-y-4">
+            {volunteering.map((v) => (
+              <div key={v.id}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-bold text-gray-900">{v.role}</h3>
+                    <p className="text-gray-600 font-medium">{v.organization}</p>
+                  </div>
+                  <span className="text-gray-600 min-w-[130px] text-right">
+                    {formatDate(v.startDate, lang)}
+                    {(v.startDate || v.endDate || v.current) && ' — '}
+                    {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
+                  </span>
+                </div>
+                {v.description && (
+                  <p className="mt-1.5 text-gray-700 leading-relaxed whitespace-pre-wrap">{v.description}</p>
                 )}
               </div>
             ))}
@@ -226,6 +259,28 @@ export default function ATSMinimalist() {
             const o = l as { name: string; level?: string };
             return `${o.name}${o.level ? ` (${o.level})` : ''}`;
           }).join(' • ')}</p>
+        </div>
+      )}
+
+      {/* Interests */}
+      {interests.length > 0 && (
+        <div className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+            {i18n[lang].interests}
+          </h2>
+          <div className="space-y-2">
+            {interests.map((it, i) => {
+              const o = typeof it === 'string' ? { id: String(i), name: it, description: '' } : it;
+              return (
+                <div key={o.id}>
+                  <h3 className="font-bold text-gray-900">{o.name}</h3>
+                  {o.description && (
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{o.description}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

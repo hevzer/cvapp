@@ -7,9 +7,40 @@ import type {
   Education,
   Certification,
   TechnicalSkill,
+  Volunteering,
+  Interest,
   TemplateType,
 } from '@/types/resume';
 import { exampleData } from '@/data/exampleData';
+
+function normalizeTechnicalSkills(
+  skills: (TechnicalSkill | string)[] | undefined,
+): TechnicalSkill[] {
+  if (!skills) return [];
+  return skills.map((s) =>
+    typeof s === 'string'
+      ? { id: crypto.randomUUID(), name: s, description: '' }
+      : s,
+  );
+}
+
+function normalizeInterests(interests: (Interest | string)[] | undefined): Interest[] {
+  if (!interests) return [];
+  return interests.map((i) =>
+    typeof i === 'string'
+      ? { id: crypto.randomUUID(), name: i, description: '' }
+      : i,
+  );
+}
+
+function normalizeResumeData(data: ResumeData): ResumeData {
+  return {
+    ...data,
+    technicalSkills: normalizeTechnicalSkills(data.technicalSkills),
+    volunteering: data.volunteering ?? [],
+    interests: normalizeInterests(data.interests),
+  };
+}
 
 const emptyResume: ResumeData = {
   personalInfo: {
@@ -27,11 +58,13 @@ const emptyResume: ResumeData = {
   },
   summary: '',
   experience: [],
+  volunteering: [],
   education: [],
   certifications: [],
   technicalSkills: [],
   softSkills: [],
   languages: [],
+  interests: [],
   hiddenKeywords: [],
   cvLanguage: 'en',
 };
@@ -58,6 +91,11 @@ interface ResumeStore {
   removeExperience: (id: string) => void;
   updateExperience: (id: string, data: Partial<Experience>) => void;
 
+  // Volunteering
+  addVolunteering: () => void;
+  removeVolunteering: (id: string) => void;
+  updateVolunteering: (id: string, data: Partial<Volunteering>) => void;
+
   // Education
   addEducation: () => void;
   removeEducation: (id: string) => void;
@@ -75,6 +113,11 @@ interface ResumeStore {
   setTechnicalSkills: (skills: (TechnicalSkill | string)[]) => void;
   setSoftSkills: (skills: string[]) => void;
   setLanguages: (languages: string[]) => void;
+
+  // Interests
+  addInterest: () => void;
+  removeInterest: (id: string) => void;
+  updateInterest: (id: string, data: Partial<Interest>) => void;
 
   // Hidden Keywords
   setHiddenKeywords: (keywords: string[]) => void;
@@ -158,6 +201,43 @@ export const useResumeStore = create<ResumeStore>()(
             ...state.resumeData,
             experience: state.resumeData.experience.map((e) =>
               e.id === id ? { ...e, ...data } : e
+            ),
+          },
+        })),
+
+      addVolunteering: () =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            volunteering: [
+              ...(state.resumeData.volunteering ?? []),
+              {
+                id: crypto.randomUUID(),
+                organization: '',
+                role: '',
+                startDate: '',
+                endDate: '',
+                current: false,
+                description: '',
+              },
+            ],
+          },
+        })),
+
+      removeVolunteering: (id) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            volunteering: (state.resumeData.volunteering ?? []).filter((v) => v.id !== id),
+          },
+        })),
+
+      updateVolunteering: (id, data) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            volunteering: (state.resumeData.volunteering ?? []).map((v) =>
+              v.id === id ? { ...v, ...data } : v
             ),
           },
         })),
@@ -280,6 +360,35 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: { ...state.resumeData, languages },
         })),
 
+      addInterest: () =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            interests: [
+              ...normalizeInterests(state.resumeData.interests),
+              { id: crypto.randomUUID(), name: '', description: '' },
+            ],
+          },
+        })),
+
+      removeInterest: (id) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            interests: normalizeInterests(state.resumeData.interests).filter((i) => i.id !== id),
+          },
+        })),
+
+      updateInterest: (id, data) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            interests: normalizeInterests(state.resumeData.interests).map((i) =>
+              i.id === id ? { ...i, ...data } : i,
+            ),
+          },
+        })),
+
       setHiddenKeywords: (keywords) =>
         set((state) => ({
           resumeData: { ...state.resumeData, hiddenKeywords: keywords },
@@ -307,25 +416,30 @@ export const useResumeStore = create<ResumeStore>()(
       toggleDarkMode: () =>
         set((state) => ({ darkMode: !state.darkMode })),
 
-      loadExampleData: () => set({ resumeData: exampleData }),
+      loadExampleData: () => set({ resumeData: normalizeResumeData(exampleData) }),
 
       clearAllData: () => set({ resumeData: emptyResume }),
 
       importLinkedInData: (data) =>
         set((state) => ({
-          resumeData: {
+          resumeData: normalizeResumeData({
             ...state.resumeData,
             ...data,
             personalInfo: {
               ...state.resumeData.personalInfo,
               ...(data.personalInfo || {}),
             },
-          },
+          }),
         })),
-      setResumeData: (resumeData) => set({ resumeData }),
+      setResumeData: (resumeData) => set({ resumeData: normalizeResumeData(resumeData) }),
     }),
     {
       name: 'cvapp-storage',
+      onRehydrateStorage: () => (state) => {
+        if (state?.resumeData) {
+          state.resumeData = normalizeResumeData(state.resumeData);
+        }
+      },
     }
   )
 );
