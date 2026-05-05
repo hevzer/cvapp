@@ -7,13 +7,21 @@ export default function HiddenKeywordsForm() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-        <span className="text-amber-600 text-lg mt-0.5">⚡</span>
-        <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-          These keywords will be hidden in your PDF — invisible to human readers but
-          detectable by ATS systems. Add job-specific skills and technologies from the
-          job description to improve your match score.
-        </p>
+      <div className="flex items-start gap-2 p-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-lg">
+        <span className="text-rose-600 text-lg mt-0.5">⚠️</span>
+        <div className="text-xs text-rose-700 dark:text-rose-300 leading-relaxed space-y-1.5">
+          <p className="font-bold">No longer rendered into your CV.</p>
+          <p>
+            Modern ATS (Greenhouse Harmonic, LLM-based screeners) detect zero-size hidden
+            text and flag the resume as deceptive — the technique now hurts more than it
+            helps. Templates produced by CVapp ship clean, well-structured HTML that
+            scores higher on parser tests without it.
+          </p>
+          <p className="text-rose-600 dark:text-rose-400">
+            Your existing keywords below are preserved in case you want to copy them into
+            a real section, but they will not appear in the printed CV.
+          </p>
+        </div>
       </div>
       <TagInput
         tags={hiddenKeywords}

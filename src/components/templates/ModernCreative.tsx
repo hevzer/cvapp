@@ -1,22 +1,13 @@
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import { formatDateNumeric } from '@/lib/date';
 import type { PersonalInfo } from '@/types/resume';
+import ContactBlock from './_shared/ContactBlock';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-function formatDate(date: string, lang: string) {
-  if (!date) return '';
-  const [year, month] = date.split('-');
-  if (!month) return year;
-  try {
-    const d = new Date(parseInt(year), parseInt(month) - 1);
-    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch {
-    return `${month}/${year}`;
-  }
-}
 
 export default function ModernCreative() {
   const resume = useResumeStore((s) => s.resumeData);
+  const hidePhoto = useResumeStore((s) => s.hidePhoto);
   const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
@@ -27,10 +18,8 @@ export default function ModernCreative() {
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
   const interests = resume.interests || [];
-  const hiddenKeywords = resume.hiddenKeywords || [];
-  const cvLanguage = resume.cvLanguage;
-  
-  const lang = getSafeLanguage(cvLanguage);
+
+  const lang = getSafeLanguage(resume.cvLanguage);
 
   const hasContent =
     personalInfo.fullName ||
@@ -57,11 +46,11 @@ export default function ModernCreative() {
   }
 
   return (
-    <div className="bg-white text-gray-900 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden flex">
+    <article lang={lang} className="bg-white text-gray-900 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden flex">
       {/* Left Sidebar */}
-      <div className="w-[35%] text-white p-6 flex flex-col" style={{ backgroundColor: 'var(--sidebar, #1e293b)' }}>
+      <aside className="w-[35%] text-white p-6 flex flex-col" style={{ backgroundColor: 'var(--sidebar, #1e293b)' }}>
         {/* Photo */}
-        {personalInfo.photoUrl && (
+        {!hidePhoto && personalInfo.photoUrl && (
           <div className="flex justify-center mb-5">
             <img
               src={personalInfo.photoUrl}
@@ -71,102 +60,66 @@ export default function ModernCreative() {
           </div>
         )}
         {/* Name & Title */}
-        <div className="mb-6">
+        <header className="mb-6">
           {personalInfo.fullName && (
             <h1 className="text-xl font-bold leading-tight">{personalInfo.fullName}</h1>
           )}
           {personalInfo.title && (
             <p className="text-sm text-slate-300 mt-1 font-medium">{personalInfo.title}</p>
           )}
-        </div>
+        </header>
 
         {/* Contact Info */}
-        {(personalInfo.email || personalInfo.phone || personalInfo.location || personalInfo.linkedin || personalInfo.website || personalInfo.drivingLicense) && (
-          <div className="mb-6">
+        {(personalInfo.email || personalInfo.phone || personalInfo.location || personalInfo.linkedin || personalInfo.github || personalInfo.website || personalInfo.drivingLicense) && (
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].contact}
             </h2>
-            <div className="space-y-2">
-              {personalInfo.email && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-envelope text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200 break-all">{personalInfo.email}</span>
-                </div>
-              )}
-              {personalInfo.phone && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-telephone text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200">{personalInfo.phone}</span>
-                </div>
-              )}
-              {personalInfo.location && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-geo-alt text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200">{personalInfo.location}</span>
-                </div>
-              )}
-              {personalInfo.linkedin && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-linkedin text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200 break-all">{personalInfo.linkedin}</span>
-                </div>
-              )}
-              {personalInfo.github && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-github text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200 break-all">{personalInfo.github}</span>
-                </div>
-              )}
-              {personalInfo.website && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-globe text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200 break-all">{personalInfo.website}</span>
-                </div>
-              )}
-              {personalInfo.drivingLicense && (
-                <div className="flex items-start gap-2">
-                  <i className="bi bi-car-front text-slate-400 mt-0.5 text-xs"></i>
-                  <span className="text-sm text-slate-200">{i18n[lang].drivingLicense}: {personalInfo.drivingLicense}</span>
-                </div>
-              )}
-            </div>
-          </div>
+            <ContactBlock
+              personalInfo={personalInfo}
+              lang={lang}
+              listClassName="space-y-2 list-none"
+              rowClassName="flex items-start gap-2"
+              iconClassName="text-slate-400 mt-0.5 text-xs"
+              valueClassName="text-sm text-slate-200"
+            />
+          </section>
         )}
 
         {/* Profile (Summary) */}
         {summary && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].profile}
             </h2>
             <p className="text-slate-300 text-xs leading-relaxed whitespace-pre-wrap">{summary}</p>
-          </div>
+          </section>
         )}
 
         {/* Soft Skills */}
         {softSkills.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].softSkills}
             </h2>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 list-none">
               {softSkills.map((skill, i) => (
-                <li key={i} className="text-xs text-slate-300 flex items-center gap-2">
-                  <i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i>
+                <li key={`soft-${i}`} className="text-xs text-slate-300 flex items-center gap-2">
+                  <span aria-hidden="true"><i className="bi bi-check2 text-xs" style={{ color: 'var(--accent, #6366f1)' }}></i></span>
                   {typeof skill === 'string' ? skill : (skill as { name: string }).name}
                 </li>
               ))}
             </ul>
-          </div>
+          </section>
         )}
 
         {/* Languages */}
         {languages.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].languages}
             </h2>
-            <div className="flex flex-wrap gap-1.5">
+            <ul className="flex flex-wrap gap-1.5 list-none">
               {languages.map((l, i) => {
                 const display = typeof l === 'string'
                   ? l
@@ -175,21 +128,21 @@ export default function ModernCreative() {
                       return `${o.name}${o.level ? ` (${o.level})` : ''}`;
                     })();
                 return (
-                  <span
-                    key={i}
+                  <li
+                    key={`lang-${i}`}
                     className="px-2 py-0.5 bg-slate-700 text-slate-200 text-xs rounded font-medium"
                   >
                     {display}
-                  </span>
+                  </li>
                 );
               })}
-            </div>
-          </div>
+            </ul>
+          </section>
         )}
 
         {/* Volunteering (compact, sidebar) */}
         {volunteering.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].volunteering}
             </h2>
@@ -199,9 +152,9 @@ export default function ModernCreative() {
                   <h3 className="text-[12px] font-bold text-slate-100 leading-tight">{v.role}</h3>
                   <p className="text-[11px] text-slate-300 font-medium">{v.organization}</p>
                   <p className="text-[10px] text-slate-400 mt-0.5">
-                    {formatDate(v.startDate, lang)}
+                    {formatDateNumeric(v.startDate)}
                     {(v.startDate || v.endDate || v.current) && ' — '}
-                    {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
+                    {v.current ? i18n[lang].present : formatDateNumeric(v.endDate)}
                   </p>
                   {v.description && (
                     <p className="text-[10.5px] text-slate-300 leading-snug mt-1 whitespace-pre-wrap">{v.description}</p>
@@ -209,51 +162,51 @@ export default function ModernCreative() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Interests */}
         {interests.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-600 pb-1.5">
               {i18n[lang].interests}
             </h2>
-            <div className="space-y-2">
+            <ul className="space-y-2 list-none">
               {interests.map((it, i) => {
                 const o = typeof it === 'string' ? { id: String(i), name: it, description: '' } : it;
                 return (
-                  <div key={o.id}>
+                  <li key={o.id}>
                     <h3 className="text-[12px] font-bold text-slate-100 leading-tight">{o.name}</h3>
                     {o.description && (
                       <p className="text-[10.5px] text-slate-300 leading-snug mt-0.5 whitespace-pre-wrap">{o.description}</p>
                     )}
-                  </div>
+                  </li>
                 );
               })}
-            </div>
-          </div>
+            </ul>
+          </section>
         )}
-      </div>
+      </aside>
 
       {/* Right Main Content */}
-      <div className="w-[65%] p-8">
+      <main className="w-[65%] p-8">
         {/* Objective */}
         {personalInfo.objective && (
-          <div className="mb-6">
+          <section className="mb-6">
             <p className="text-slate-600 font-medium italic text-sm leading-relaxed pl-4 py-1" style={{ borderLeft: '4px solid var(--accent, #6366f1)' }}>
               "{personalInfo.objective}"
             </p>
-          </div>
+          </section>
         )}
         {/* Technical Skills */}
         {technicalSkills.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].technicalSkills}
             </h2>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-4 list-none">
               {technicalSkills.map((skill, i) => (
-                <div key={typeof skill === 'string' ? i : skill.id}>
+                <li key={typeof skill === 'string' ? `tech-${i}` : skill.id}>
                   <h3 className="font-bold text-gray-900 text-[13px]">
                     {typeof skill === 'string' ? skill : skill.name}
                   </h3>
@@ -262,15 +215,15 @@ export default function ModernCreative() {
                       {skill.description}
                     </p>
                   )}
-                </div>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
         )}
 
         {/* Experience */}
         {experience.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].experience}
             </h2>
@@ -283,9 +236,9 @@ export default function ModernCreative() {
                       <p className="text-gray-600 font-medium text-sm">{exp.company}</p>
                     </div>
                     <span className="text-xs text-gray-500 whitespace-nowrap ml-4 mt-0.5 bg-gray-100 px-2 py-0.5 rounded">
-                      {formatDate(exp.startDate, lang)}
+                      {formatDateNumeric(exp.startDate)}
                       {(exp.startDate || exp.endDate || exp.current) && ' — '}
-                      {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
+                      {exp.current ? i18n[lang].present : formatDateNumeric(exp.endDate)}
                     </span>
                   </div>
                   {exp.description && (
@@ -294,12 +247,12 @@ export default function ModernCreative() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Education */}
         {education.length > 0 && (
-          <div className="mb-6">
+          <section className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
               {i18n[lang].education}
             </h2>
@@ -313,9 +266,9 @@ export default function ModernCreative() {
                       <p className="text-gray-600 font-medium text-[12.5px]">{edu.institution}</p>
                     </div>
                     <span className="text-xs text-gray-500 whitespace-nowrap ml-4 mt-0.5 bg-gray-100 px-2 py-0.5 rounded">
-                      {formatDate(edu.startDate, lang)}
+                      {formatDateNumeric(edu.startDate)}
                       {(edu.startDate || edu.endDate) && ' — '}
-                      {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
+                      {edu.endDate ? formatDateNumeric(edu.endDate) : i18n[lang].present}
                     </span>
                   </div>
                   {edu.description && (
@@ -324,27 +277,41 @@ export default function ModernCreative() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
-      </div>
 
-      {/* Hidden ATS Keywords */}
-      {hiddenKeywords.length > 0 && (
-        <div
-          aria-hidden="true"
-          style={{
-            fontSize: 0,
-            lineHeight: 0,
-            color: 'transparent',
-            height: 0,
-            overflow: 'hidden',
-            position: 'absolute',
-            width: 0,
-          }}
-        >
-          {hiddenKeywords.join(' ')}
-        </div>
-      )}
-    </div>
+        {/* Certifications (rendered in main column when present) */}
+        {certifications.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 pb-1.5 mb-3" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
+              {i18n[lang].certifications}
+            </h2>
+            <ul className="space-y-3 list-none">
+              {certifications.map((cert) => (
+                <li key={cert.id}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-bold text-gray-900">
+                        {cert.name}
+                        {cert.url && (
+                          <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-cyan-600 hover:text-cyan-800 break-all text-xs print:text-gray-900 print:no-underline">
+                            <span aria-hidden="true"><i className="bi bi-box-arrow-up-right print:hidden"></i></span>
+                            <span className="hidden print:inline"> ({cert.url})</span>
+                          </a>
+                        )}
+                      </h3>
+                      <p className="text-gray-600 font-medium text-sm">{cert.issuer}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 whitespace-nowrap ml-4 mt-0.5 bg-gray-100 px-2 py-0.5 rounded">
+                      {formatDateNumeric(cert.date)}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </main>
+    </article>
   );
 }

@@ -79,6 +79,7 @@ interface ResumeStore {
   accentColor: string;
   sidebarColor: string;
   fontFamily: string;
+  hidePhoto: boolean;
 
   // Personal Info
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -131,6 +132,7 @@ interface ResumeStore {
   setAccentColor: (color: string) => void;
   setSidebarColor: (color: string) => void;
   setFontFamily: (font: string) => void;
+  setHidePhoto: (hide: boolean) => void;
 
   // Dark mode
   toggleDarkMode: () => void;
@@ -154,6 +156,7 @@ export const useResumeStore = create<ResumeStore>()(
       accentColor: '#6366f1',
       sidebarColor: '#1e293b',
       fontFamily: 'Inter',
+      hidePhoto: false,
 
       updatePersonalInfo: (info) =>
         set((state) => ({
@@ -407,6 +410,8 @@ export const useResumeStore = create<ResumeStore>()(
       setSidebarColor: (sidebarColor) => set({ sidebarColor }),
 
       setFontFamily: (fontFamily) => set({ fontFamily }),
+
+      setHidePhoto: (hidePhoto) => set({ hidePhoto }),
 
       setCvLanguage: (cvLanguage) =>
         set((state) => ({

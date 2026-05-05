@@ -37,6 +37,8 @@ export default function StyleCustomizer() {
   const setSidebarColor = useResumeStore((s) => s.setSidebarColor);
   const fontFamily = useResumeStore((s) => s.fontFamily);
   const setFontFamily = useResumeStore((s) => s.setFontFamily);
+  const hidePhoto = useResumeStore((s) => s.hidePhoto);
+  const setHidePhoto = useResumeStore((s) => s.setHidePhoto);
 
   return (
     <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-transparent shadow-[0_2px_8px_rgb(0,0,0,0.08)] dark:shadow-none space-y-5">
@@ -102,6 +104,26 @@ export default function StyleCustomizer() {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Hide Photo (ATS-safe for US/UK) */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={hidePhoto}
+            onChange={(e) => setHidePhoto(e.target.checked)}
+            className="mt-0.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 w-4 h-4 cursor-pointer"
+          />
+          <span className="flex-1">
+            <span className="block text-[11px] font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
+              Hide photo
+            </span>
+            <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+              Recommended for US/UK applications. Some ATS flag photos as bias risk.
+            </span>
+          </span>
+        </label>
       </div>
     </div>
   );

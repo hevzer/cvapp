@@ -1,21 +1,11 @@
 import { useResumeStore } from '@/store/useResumeStore';
 import { i18n, getSafeLanguage } from '@/lib/i18n';
+import { formatDateNumeric } from '@/lib/date';
 import type { PersonalInfo } from '@/types/resume';
-
-function formatDate(date: string, lang: string) {
-  if (!date) return '';
-  const [year, month] = date.split('-');
-  if (!month) return year;
-  try {
-    const d = new Date(parseInt(year), parseInt(month) - 1);
-    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
-  } catch {
-    return `${month}/${year}`;
-  }
-}
 
 export default function ATSMinimalist() {
   const resume = useResumeStore((s) => s.resumeData);
+  const hidePhoto = useResumeStore((s) => s.hidePhoto);
   const personalInfo: Partial<PersonalInfo> = resume.personalInfo || {};
   const summary = resume.summary || '';
   const experience = resume.experience || [];
@@ -26,10 +16,8 @@ export default function ATSMinimalist() {
   const softSkills = resume.softSkills || [];
   const languages = resume.languages || [];
   const interests = resume.interests || [];
-  const hiddenKeywords = resume.hiddenKeywords || [];
-  const cvLanguage = resume.cvLanguage;
 
-  const lang = getSafeLanguage(cvLanguage);
+  const lang = getSafeLanguage(resume.cvLanguage);
 
   const hasContent =
     personalInfo.fullName ||
@@ -55,11 +43,14 @@ export default function ATSMinimalist() {
     );
   }
 
+  const accentHeader = "text-sm font-bold uppercase tracking-wider pb-1 mb-2";
+  const accentHeaderStyle = { color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' } as const;
+
   return (
-    <div className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden">
+    <article lang={lang} className="bg-white text-gray-900 p-8 max-w-[210mm] mx-auto text-[13px] leading-relaxed min-h-[297mm] max-h-[297mm] overflow-hidden">
       {/* Header */}
-      <div className="text-center pb-4 mb-5" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
-        {personalInfo.photoUrl && (
+      <header className="text-center pb-4 mb-5" style={{ borderBottom: '2px solid var(--accent, #1e293b)' }}>
+        {!hidePhoto && personalInfo.photoUrl && (
           <div className="flex justify-center mb-3">
             <img
               src={personalInfo.photoUrl}
@@ -78,40 +69,52 @@ export default function ATSMinimalist() {
             {personalInfo.title}
           </p>
         )}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 text-xs text-gray-600">
-          {personalInfo.email && <span>{personalInfo.email}</span>}
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.location && <span>{personalInfo.location}</span>}
-          {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
-          {personalInfo.github && <span>{personalInfo.github}</span>}
-          {personalInfo.website && <span>{personalInfo.website}</span>}
-          {personalInfo.drivingLicense && (
-            <span>{i18n[lang].drivingLicense}: {personalInfo.drivingLicense}</span>
+        <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 text-xs text-gray-600 list-none">
+          {personalInfo.email && (
+            <li><span className="sr-only">Email: </span>{personalInfo.email}</li>
           )}
-        </div>
-      </div>
+          {personalInfo.phone && (
+            <li><span className="sr-only">Phone: </span>{personalInfo.phone}</li>
+          )}
+          {personalInfo.location && (
+            <li><span className="sr-only">Location: </span>{personalInfo.location}</li>
+          )}
+          {personalInfo.linkedin && (
+            <li><span className="sr-only">LinkedIn: </span>{personalInfo.linkedin}</li>
+          )}
+          {personalInfo.github && (
+            <li><span className="sr-only">GitHub: </span>{personalInfo.github}</li>
+          )}
+          {personalInfo.website && (
+            <li><span className="sr-only">Website: </span>{personalInfo.website}</li>
+          )}
+          {personalInfo.drivingLicense && (
+            <li>{i18n[lang].drivingLicense}: {personalInfo.drivingLicense}</li>
+          )}
+        </ul>
+      </header>
 
       {/* Objective */}
       {personalInfo.objective && (
-        <div className="mb-5 text-center">
+        <section className="mb-5 text-center">
           <p className="text-gray-800 font-medium italic">"{personalInfo.objective}"</p>
-        </div>
+        </section>
       )}
 
       {/* Summary */}
       {summary && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-5">
+          <h2 className={accentHeader} style={accentHeaderStyle}>
             {i18n[lang].profile}
           </h2>
           <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{summary}</p>
-        </div>
+        </section>
       )}
 
       {/* Experience */}
       {experience.length > 0 && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={accentHeaderStyle}>
             {i18n[lang].experience}
           </h2>
           <div className="space-y-4">
@@ -123,9 +126,9 @@ export default function ATSMinimalist() {
                     <p className="text-gray-600 font-medium">{exp.company}</p>
                   </div>
                   <span className="text-gray-600 min-w-[130px] text-right">
-                    {formatDate(exp.startDate, lang)}
+                    {formatDateNumeric(exp.startDate)}
                     {(exp.startDate || exp.endDate || exp.current) && ' — '}
-                    {exp.current ? i18n[lang].present : formatDate(exp.endDate, lang)}
+                    {exp.current ? i18n[lang].present : formatDateNumeric(exp.endDate)}
                   </span>
                 </div>
                 {exp.description && (
@@ -134,41 +137,12 @@ export default function ATSMinimalist() {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Volunteering */}
-      {volunteering.length > 0 && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
-            {i18n[lang].volunteering}
-          </h2>
-          <div className="space-y-4">
-            {volunteering.map((v) => (
-              <div key={v.id}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-bold text-gray-900">{v.role}</h3>
-                    <p className="text-gray-600 font-medium">{v.organization}</p>
-                  </div>
-                  <span className="text-gray-600 min-w-[130px] text-right">
-                    {formatDate(v.startDate, lang)}
-                    {(v.startDate || v.endDate || v.current) && ' — '}
-                    {v.current ? i18n[lang].present : formatDate(v.endDate, lang)}
-                  </span>
-                </div>
-                {v.description && (
-                  <p className="mt-1.5 text-gray-700 leading-relaxed whitespace-pre-wrap">{v.description}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        </section>
       )}
 
       {/* Education */}
       {education.length > 0 && (
-        <div className="mb-5">
+        <section className="mb-5">
           <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-3">
             {i18n[lang].education}
           </h2>
@@ -182,9 +156,9 @@ export default function ATSMinimalist() {
                     <p className="text-gray-600 font-medium">{edu.institution}</p>
                   </div>
                   <span className="text-gray-600 min-w-[130px] text-right">
-                    {formatDate(edu.startDate, lang)}
+                    {formatDateNumeric(edu.startDate)}
                     {(edu.startDate || edu.endDate) && ' — '}
-                    {edu.endDate ? formatDate(edu.endDate, lang) : i18n[lang].present}
+                    {edu.endDate ? formatDateNumeric(edu.endDate) : i18n[lang].present}
                   </span>
                 </div>
                 {edu.description && (
@@ -193,12 +167,12 @@ export default function ATSMinimalist() {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Certifications */}
       {certifications.length > 0 && (
-        <div className="mb-5">
+        <section className="mb-5">
           <h2 className="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-3">
             {i18n[lang].certifications}
           </h2>
@@ -211,7 +185,7 @@ export default function ATSMinimalist() {
                       {cert.name}
                       {cert.url && (
                         <a href={cert.url} target="_blank" rel="noopener noreferrer" className="ml-2 text-cyan-600 hover:text-cyan-800 break-all text-xs print:text-gray-900 print:no-underline">
-                          <i className="bi bi-box-arrow-up-right print:hidden"></i>
+                          <span aria-hidden="true"><i className="bi bi-box-arrow-up-right print:hidden"></i></span>
                           <span className="hidden print:inline"> ({cert.url})</span>
                         </a>
                       )}
@@ -219,53 +193,100 @@ export default function ATSMinimalist() {
                     <p className="text-gray-600 font-medium">{cert.issuer}</p>
                   </div>
                   <span className="text-gray-600 min-w-[130px] text-right">
-                    {formatDate(cert.date, lang)}
+                    {formatDateNumeric(cert.date)}
                   </span>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+      )}
+
+      {/* Volunteering */}
+      {volunteering.length > 0 && (
+        <section className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={accentHeaderStyle}>
+            {i18n[lang].volunteering}
+          </h2>
+          <div className="space-y-4">
+            {volunteering.map((v) => (
+              <div key={v.id}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-bold text-gray-900">{v.role}</h3>
+                    <p className="text-gray-600 font-medium">{v.organization}</p>
+                  </div>
+                  <span className="text-gray-600 min-w-[130px] text-right">
+                    {formatDateNumeric(v.startDate)}
+                    {(v.startDate || v.endDate || v.current) && ' — '}
+                    {v.current ? i18n[lang].present : formatDateNumeric(v.endDate)}
+                  </span>
+                </div>
+                {v.description && (
+                  <p className="mt-1.5 text-gray-700 leading-relaxed whitespace-pre-wrap">{v.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Technical Skills */}
       {technicalSkills.length > 0 && (
-        <div className="mb-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-4">
+          <h2 className={accentHeader} style={accentHeaderStyle}>
             {i18n[lang].technicalSkills}
           </h2>
-          <p className="text-gray-700">{technicalSkills.map(s => typeof s === 'string' ? s : s.name).join(' • ')}</p>
-        </div>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-gray-700 list-none">
+            {technicalSkills.map((s, i) => (
+              <li key={typeof s === 'string' ? `s-${i}` : s.id}>
+                {typeof s === 'string' ? s : s.name}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {/* Soft Skills */}
       {softSkills.length > 0 && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-5">
+          <h2 className={accentHeader} style={accentHeaderStyle}>
             {i18n[lang].softSkills}
           </h2>
-          <p className="text-gray-700">{softSkills.map(s => typeof s === 'string' ? s : (s as { name: string }).name).join(' • ')}</p>
-        </div>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-gray-700 list-none">
+            {softSkills.map((s, i) => (
+              <li key={`soft-${i}`}>
+                {typeof s === 'string' ? s : (s as { name: string }).name}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {/* Languages */}
       {languages.length > 0 && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-2" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-5">
+          <h2 className={accentHeader} style={accentHeaderStyle}>
             {i18n[lang].languages}
           </h2>
-          <p className="text-gray-700">{languages.map(l => {
-            if (typeof l === 'string') return l;
-            const o = l as { name: string; level?: string };
-            return `${o.name}${o.level ? ` (${o.level})` : ''}`;
-          }).join(' • ')}</p>
-        </div>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-gray-700 list-none">
+            {languages.map((l, i) => {
+              const display = typeof l === 'string'
+                ? l
+                : (() => {
+                    const o = l as { name: string; level?: string };
+                    return `${o.name}${o.level ? ` (${o.level})` : ''}`;
+                  })();
+              return <li key={`lang-${i}`}>{display}</li>;
+            })}
+          </ul>
+        </section>
       )}
 
       {/* Interests */}
       {interests.length > 0 && (
-        <div className="mb-5">
-          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={{ color: 'var(--accent, #1e293b)', borderBottom: '1px solid var(--accent, #d1d5db)' }}>
+        <section className="mb-5">
+          <h2 className="text-sm font-bold uppercase tracking-wider pb-1 mb-3" style={accentHeaderStyle}>
             {i18n[lang].interests}
           </h2>
           <div className="space-y-2">
@@ -281,26 +302,8 @@ export default function ATSMinimalist() {
               );
             })}
           </div>
-        </div>
+        </section>
       )}
-
-      {/* Hidden ATS Keywords */}
-      {hiddenKeywords.length > 0 && (
-        <div
-          aria-hidden="true"
-          style={{
-            fontSize: 0,
-            lineHeight: 0,
-            color: 'transparent',
-            height: 0,
-            overflow: 'hidden',
-            position: 'absolute',
-            width: 0,
-          }}
-        >
-          {hiddenKeywords.join(' ')}
-        </div>
-      )}
-    </div>
+    </article>
   );
 }
