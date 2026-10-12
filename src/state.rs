@@ -14,7 +14,7 @@ pub struct PersistedState {
     #[serde(default)]
     pub active_template: TemplateType,
     #[serde(default)]
-    pub dark_mode: bool,
+    pub dark_mode: Option<bool>,
     #[serde(default = "default_scale")]
     pub text_scale: f64,
     #[serde(default = "default_scale")]
@@ -29,6 +29,13 @@ pub struct PersistedState {
     pub font_family: String,
     #[serde(default)]
     pub hide_photo: bool,
+}
+
+pub fn detect_system_dark_mode() -> bool {
+    web_sys::window()
+        .and_then(|w| w.match_media("(prefers-color-scheme: dark)").ok().flatten())
+        .map(|m| m.matches())
+        .unwrap_or(false)
 }
 
 fn default_scale() -> f64 {
@@ -73,7 +80,7 @@ impl AppState {
                 (
                     s.resume_data,
                     s.active_template,
-                    s.dark_mode,
+                    s.dark_mode.unwrap_or_else(detect_system_dark_mode),
                     s.text_scale,
                     s.spacing_scale,
                     s.font_scale,
@@ -86,7 +93,7 @@ impl AppState {
                 (
                     ResumeData::default(),
                     TemplateType::Ats,
-                    false,
+                    detect_system_dark_mode(),
                     1.0,
                     1.0,
                     1.0,
@@ -116,7 +123,7 @@ impl AppState {
             state: PersistedState {
                 resume_data: self.resume_data.get(),
                 active_template: self.active_template.get(),
-                dark_mode: self.dark_mode.get(),
+                dark_mode: Some(self.dark_mode.get()),
                 text_scale: self.text_scale.get(),
                 spacing_scale: self.spacing_scale.get(),
                 font_scale: self.font_scale.get(),

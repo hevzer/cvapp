@@ -46,6 +46,23 @@ pub fn App() -> impl IntoView {
         }
     });
 
+    // Listen to real-time operating system theme changes (dark/light)
+    if let Some(window) = web_sys::window() {
+        if let Ok(Some(mql)) = window.match_media("(prefers-color-scheme: dark)") {
+            use wasm_bindgen::JsCast;
+            let dm = state.dark_mode;
+            let on_change = wasm_bindgen::closure::Closure::wrap(Box::new(move |_ev: web_sys::Event| {
+                if let Some(w) = web_sys::window() {
+                    if let Ok(Some(mq)) = w.match_media("(prefers-color-scheme: dark)") {
+                        dm.set(mq.matches());
+                    }
+                }
+            }) as Box<dyn FnMut(_)>);
+            let _ = mql.add_event_listener_with_callback("change", on_change.as_ref().unchecked_ref());
+            on_change.forget();
+        }
+    }
+
     // Auto-persist state changes
     Effect::new(move |_| {
         state.save_to_storage();
