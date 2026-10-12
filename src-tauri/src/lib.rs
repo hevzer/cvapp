@@ -4,7 +4,10 @@ pub fn run() {
   {
     // Prevent WebKitGTK Wayland display protocol error (Error 71)
     if std::env::var("WEBKIT_DISABLE_DMABUF_RENDERER").is_err() {
-      std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+      // SAFETY: Called on process initialization before spawning threads
+      unsafe {
+        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+      }
     }
   }
 
