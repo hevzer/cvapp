@@ -38,6 +38,9 @@ cd cvapp
 
 # Install toolchains via mise (Rust 1.99, Trunk, Tauri CLI, Bun)
 mise install
+
+# (Linux Desktop only) Automatically install required OS desktop libraries
+mise run setup
 ```
 
 Alternatively, ensure you have:

@@ -56,6 +56,7 @@ Because it operates entirely without a backend API, all state is handled nativel
 ## Maintenance Commands
 ```bash
 # Using mise (recommended):
+mise run setup          # Auto-detect OS and install required desktop system libraries
 mise run dev            # Start Trunk dev server with hot-reloading (http://localhost:8080)
 mise run build          # Build release WASM bundle to dist/
 mise run desktop:dev    # Start Tauri desktop app in dev mode
