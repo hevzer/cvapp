@@ -1,0 +1,12 @@
+[build]
+target = "index.html"
+dist = "dist"
+
+[serve]
+port = 8080
+open = false
+
+[[hooks]]
+stage = "pre_build"
+command = "bunx"
+command_arguments = ["@tailwindcss/cli", "-i", "tailwind.css", "-o", "style/tailwind.css", "--minify"]

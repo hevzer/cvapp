@@ -42,3 +42,12 @@ next-env.d.ts
 /dist/
 
 .claude/
+
+# Rust / Cargo
+/target/
+src-tauri/target/
+
+# Trunk / Tailwind
+/.trunk/
+/style/
+dist/

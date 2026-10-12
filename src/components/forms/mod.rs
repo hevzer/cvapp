@@ -1,0 +1,11 @@
+pub mod certifications_form;
+pub mod education_form;
+pub mod experience_form;
+pub mod hidden_keywords_form;
+pub mod interests_form;
+pub mod languages_form;
+pub mod personal_info_form;
+pub mod soft_skills_form;
+pub mod summary_form;
+pub mod technical_skills_form;
+pub mod volunteering_form;

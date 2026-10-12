@@ -1,0 +1,27 @@
+[tools]
+rust = "1.99.0"
+"cargo:trunk" = "latest"
+"cargo:tauri-cli" = "latest"
+cargo-binstall = "latest"
+bun = "latest"
+
+[tasks.dev]
+description = "Start Leptos web development server with hot-reload"
+run = "trunk serve"
+
+[tasks.build]
+description = "Build production WebAssembly package"
+run = "trunk build --release"
+
+[tasks."desktop:dev"]
+description = "Start Tauri desktop app in development mode"
+run = "cargo tauri dev"
+
+[tasks."desktop:build"]
+description = "Build release desktop installer with Tauri"
+run = "cargo tauri build"
+
+[tasks.test]
+description = "Run unit test suite"
+run = "cargo test --lib"
+

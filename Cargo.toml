@@ -1,0 +1,44 @@
+[package]
+name = "cvapp"
+version = "0.2.0"
+edition = "2024"
+
+[dependencies]
+leptos = { version = "0.8.22", features = ["csr"] }
+leptos_meta = { version = "0.8.7" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+gloo-storage = "0.4.0"
+web-sys = { version = "0.3.77", features = [
+    "Window",
+    "Document",
+    "HtmlElement",
+    "HtmlInputElement",
+    "HtmlSelectElement",
+    "HtmlTextAreaElement",
+    "File",
+    "FileList",
+    "Blob",
+    "BlobPropertyBag",
+    "Url",
+    "FileReader",
+    "Storage",
+    "Element",
+    "DomTokenList",
+    "Event",
+    "InputEvent",
+    "MouseEvent",
+    "ProgressEvent",
+] }
+js-sys = "0.3.77"
+wasm-bindgen = "0.2.129"
+wasm-bindgen-futures = "0.4"
+uuid = { version = "1.28.0", features = ["v4", "js"] }
+zip = { version = "9.0.2", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+console_error_panic_hook = "0.1.7"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
