@@ -58,6 +58,16 @@ pub struct ZustandWrapper {
     pub version: Option<u32>,
 }
 
+use crate::services::file_sync::LinkedFile;
+
+#[derive(Clone, PartialEq, Debug)]
+pub enum SyncStatus {
+    LocalCache,
+    Saving,
+    Synced(String),
+    Error(String),
+}
+
 #[derive(Clone, Copy)]
 pub struct AppState {
     pub resume_data: RwSignal<ResumeData>,
@@ -70,6 +80,9 @@ pub struct AppState {
     pub sidebar_color: RwSignal<String>,
     pub font_family: RwSignal<String>,
     pub hide_photo: RwSignal<bool>,
+    pub linked_file: RwSignal<Option<LinkedFile>>,
+    pub sync_status: RwSignal<SyncStatus>,
+    pub save_timer: RwSignal<Option<i32>>,
 }
 
 impl AppState {
@@ -115,22 +128,72 @@ impl AppState {
             sidebar_color: RwSignal::new(sidebar),
             font_family: RwSignal::new(font),
             hide_photo: RwSignal::new(photo),
+            linked_file: RwSignal::new(None),
+            sync_status: RwSignal::new(SyncStatus::LocalCache),
+            save_timer: RwSignal::new(None),
+        }
+    }
+
+    pub fn schedule_save(&self) {
+        if let Some(w) = web_sys::window() {
+            if let Some(handle) = self.save_timer.get_untracked() {
+                w.clear_timeout_with_handle(handle);
+            }
+            use wasm_bindgen::JsCast;
+            let this = *self;
+            let cb = wasm_bindgen::closure::Closure::once(move || {
+                this.save_timer.set(None);
+                this.save_all();
+            });
+            if let Ok(handle) = w.set_timeout_with_callback_and_timeout_and_arguments_0(
+                cb.as_ref().unchecked_ref(),
+                300,
+            ) {
+                self.save_timer.set(Some(handle));
+            }
+            cb.forget();
+        } else {
+            self.save_all();
+        }
+    }
+
+    pub fn save_all(&self) {
+        self.save_to_storage();
+
+        if let Some(linked) = self.linked_file.get_untracked() {
+            let status = self.sync_status;
+            status.set(SyncStatus::Saving);
+            let data = self.resume_data.get_untracked();
+            if let Ok(json_str) = serde_json::to_string_pretty(&data) {
+                wasm_bindgen_futures::spawn_local(async move {
+                    match crate::services::file_sync::write_to_linked_file(&linked, &json_str).await {
+                        Ok(_) => {
+                            status.set(SyncStatus::Synced(linked.name().to_string()));
+                        }
+                        Err(e) => {
+                            status.set(SyncStatus::Error(e));
+                        }
+                    }
+                });
+            }
+        } else {
+            self.sync_status.set(SyncStatus::LocalCache);
         }
     }
 
     pub fn save_to_storage(&self) {
         let wrapper = ZustandWrapper {
             state: PersistedState {
-                resume_data: self.resume_data.get(),
-                active_template: self.active_template.get(),
-                dark_mode: Some(self.dark_mode.get()),
-                text_scale: self.text_scale.get(),
-                spacing_scale: self.spacing_scale.get(),
-                font_scale: self.font_scale.get(),
-                accent_color: self.accent_color.get(),
-                sidebar_color: self.sidebar_color.get(),
-                font_family: self.font_family.get(),
-                hide_photo: self.hide_photo.get(),
+                resume_data: self.resume_data.get_untracked(),
+                active_template: self.active_template.get_untracked(),
+                dark_mode: Some(self.dark_mode.get_untracked()),
+                text_scale: self.text_scale.get_untracked(),
+                spacing_scale: self.spacing_scale.get_untracked(),
+                font_scale: self.font_scale.get_untracked(),
+                accent_color: self.accent_color.get_untracked(),
+                sidebar_color: self.sidebar_color.get_untracked(),
+                font_family: self.font_family.get_untracked(),
+                hide_photo: self.hide_photo.get_untracked(),
             },
             version: Some(0),
         };
@@ -139,11 +202,11 @@ impl AppState {
 
     pub fn load_example(&self) {
         self.resume_data.set(get_example_data());
-        self.save_to_storage();
+        self.schedule_save();
     }
 
     pub fn clear_all(&self) {
         self.resume_data.set(ResumeData::default());
-        self.save_to_storage();
+        self.schedule_save();
     }
 }

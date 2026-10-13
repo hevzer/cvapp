@@ -53,6 +53,14 @@ Because it operates entirely without a backend API, all state is handled nativel
    - `src/services/linkedin.rs` provides a pure-Rust parser for both `.zip` archive exports and `.json` profile dumps.
    - Employs streaming file reader with JavaScript `Uint8Array` bridging.
 
+8. **Live JSON File Sync & Debounced Persistence**:
+   - Continuous auto-save is powered by a reactive debounced Leptos `Effect` (~300ms) in `src/app.rs` tracking all state signals without component boilerplate.
+   - Saves synchronously to `localStorage` (via `ZustandWrapper`) as an always-active fail-safe backup.
+   - Supports **Project File Workflow** via `src/services/file_sync.rs`:
+     - **Desktop (Tauri)**: Invokes native Rust commands with `rfd` file pickers (`pick_save_file`, `pick_open_file`) and writes directly to disk via `write_file_content`.
+     - **Web (Chromium)**: Invokes browser File System Access API (`showSaveFilePicker`, `showOpenFilePicker`) with streaming writable file handles.
+     - **Fallback**: Gracefully falls back to browser cache auto-save and standard manual JSON file download/upload.
+
 ## Maintenance Commands
 ```bash
 # Using mise (recommended):

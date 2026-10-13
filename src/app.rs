@@ -63,9 +63,19 @@ pub fn App() -> impl IntoView {
         }
     }
 
-    // Auto-persist state changes
+    // Auto-persist state changes with reactive debouncing
     Effect::new(move |_| {
-        state.save_to_storage();
+        let _ = state.resume_data.get();
+        let _ = state.active_template.get();
+        let _ = state.dark_mode.get();
+        let _ = state.text_scale.get();
+        let _ = state.spacing_scale.get();
+        let _ = state.font_scale.get();
+        let _ = state.accent_color.get();
+        let _ = state.sidebar_color.get();
+        let _ = state.font_family.get();
+        let _ = state.hide_photo.get();
+        state.schedule_save();
     });
 
     let dict = move || {
