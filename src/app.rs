@@ -96,13 +96,19 @@ pub fn App() -> impl IntoView {
                             <div class="flex items-center justify-between max-w-[1920px] mx-auto">
                                 {/* Brand & Project Navigation */}
                                 <div class="flex items-center gap-3 select-none">
-                                    <div class="w-10 h-10 flex items-center justify-center">
-                                        <img src="/cvapp_macos_logo.png" alt="CVapp Logo" class="w-full h-full object-contain drop-shadow-md" />
-                                    </div>
-                                    <div class="flex items-center gap-2">
+                                    <div
+                                        on:click=move |_| state.go_to_home()
+                                        title="Go to Projects Dashboard"
+                                        class="flex items-center gap-2.5 cursor-pointer hover:opacity-85 transition-opacity"
+                                    >
+                                        <div class="w-10 h-10 flex items-center justify-center">
+                                            <img src="/cvapp_macos_logo.png" alt="CVapp Logo" class="w-full h-full object-contain drop-shadow-md" />
+                                        </div>
                                         <h1 class="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
                                             "CVapp"
                                         </h1>
+                                    </div>
+                                    <div class="flex items-center gap-2">
                                         <div class="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1" />
                                         <button
                                             type="button"
