@@ -61,6 +61,12 @@ Because it operates entirely without a backend API, all state is handled nativel
      - **Web (Chromium)**: Invokes browser File System Access API (`showSaveFilePicker`, `showOpenFilePicker`) with streaming writable file handles.
      - **Fallback**: Gracefully falls back to browser cache auto-save and standard manual JSON file download/upload.
 
+9. **Projects System & Home Dashboard**:
+   - Multi-resume management powered by `CvProject` and `ProjectsStore` in `src/models.rs` and `src/state.rs`.
+   - Projects Dashboard view (`src/components/home/projects_home.rs`) allows creating new blank resumes, spinning up from example data, importing JSON / LinkedIn, duplicating, renaming, exporting, and deleting resumes.
+   - Header project switcher allows instant switching between resumes directly within the editor.
+   - Transparent zero-data-loss migration from legacy single-resume `cvapp-storage` to `cvapp-projects`.
+
 ## Maintenance Commands
 ```bash
 # Using mise (recommended):

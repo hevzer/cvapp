@@ -47,9 +47,39 @@ pub fn format_date_localized(date: &str, lang: &str) -> String {
     }
 }
 
+pub fn format_relative_time(timestamp: u64, now: u64) -> String {
+    if timestamp == 0 || now < timestamp {
+        return "Recently".to_string();
+    }
+    let diff = now - timestamp;
+    if diff < 60 {
+        "Just now".to_string()
+    } else if diff < 3600 {
+        let mins = diff / 60;
+        format!("{}m ago", mins)
+    } else if diff < 86400 {
+        let hours = diff / 3600;
+        format!("{}h ago", hours)
+    } else if diff < 86400 * 30 {
+        let days = diff / 86400;
+        format!("{}d ago", days)
+    } else {
+        let months = diff / (86400 * 30);
+        format!("{}mo ago", months)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_format_relative_time() {
+        assert_eq!(format_relative_time(1000, 1020), "Just now");
+        assert_eq!(format_relative_time(1000, 1180), "3m ago");
+        assert_eq!(format_relative_time(1000, 8200), "2h ago");
+        assert_eq!(format_relative_time(1000, 1000 + 86400 * 3), "3d ago");
+    }
 
     #[test]
     fn test_format_date_numeric() {

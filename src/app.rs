@@ -1,6 +1,7 @@
 use crate::components::about_modal::AboutModal;
 use crate::components::data_actions::DataActions;
 use crate::components::export_button::ExportButton;
+use crate::components::home::projects_home::ProjectsHome;
 use crate::components::forms::certifications_form::CertificationsForm;
 use crate::components::forms::education_form::EducationForm;
 use crate::components::forms::experience_form::ExperienceForm;
@@ -84,19 +85,62 @@ pub fn App() -> impl IntoView {
     };
 
     view! {
-        <div class="flex flex-col h-screen bg-slate-100 dark:bg-black print:bg-none print:h-auto print:block">
-            {/* Header */}
-            <header class="flex-shrink-0 bg-white dark:bg-[#0a0a0a] shadow-md z-20 px-6 py-3 animate-slide-up print:hidden relative border-b border-transparent dark:border-white/[0.05]">
-                <div class="flex items-center justify-between max-w-[1920px] mx-auto">
-                    {/* Brand */}
-                    <div class="flex items-center gap-3 group cursor-default select-none">
-                        <div class="w-11 h-11 flex items-center justify-center transition-shadow duration-300">
-                            <img src="/cvapp_macos_logo.png" alt="CVapp Logo" class="w-full h-full object-contain drop-shadow-md" />
-                        </div>
-                        <h1 class="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
-                            "CVapp"
-                        </h1>
-                    </div>
+        {move || {
+            if state.is_home_view.get() {
+                view! { <ProjectsHome /> }.into_any()
+            } else {
+                view! {
+                    <div class="flex flex-col h-screen bg-slate-100 dark:bg-black print:bg-none print:h-auto print:block">
+                        {/* Header */}
+                        <header class="flex-shrink-0 bg-white dark:bg-[#0a0a0a] shadow-md z-20 px-6 py-3 animate-slide-up print:hidden relative border-b border-transparent dark:border-white/[0.05]">
+                            <div class="flex items-center justify-between max-w-[1920px] mx-auto">
+                                {/* Brand & Project Navigation */}
+                                <div class="flex items-center gap-3 select-none">
+                                    <div class="w-10 h-10 flex items-center justify-center">
+                                        <img src="/cvapp_macos_logo.png" alt="CVapp Logo" class="w-full h-full object-contain drop-shadow-md" />
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <h1 class="text-lg font-extrabold tracking-tight text-gray-900 dark:text-white">
+                                            "CVapp"
+                                        </h1>
+                                        <div class="w-px h-4 bg-slate-200 dark:bg-white/10 mx-1" />
+                                        <button
+                                            type="button"
+                                            on:click=move |_| state.go_to_home()
+                                            title="Return to Projects Dashboard"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-300 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800/40 transition-all cursor-pointer"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                            </svg>
+                                            <span>"All Resumes"</span>
+                                        </button>
+
+                                        {/* Project Switcher Select */}
+                                        <select
+                                            prop:value=move || state.active_project_id.get().unwrap_or_default()
+                                            on:change=move |ev| {
+                                                let id = event_target_value(&ev);
+                                                if !id.is_empty() {
+                                                    state.open_project(&id);
+                                                }
+                                            }
+                                            class="text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/[0.1] rounded-full px-3 py-1.5 border border-transparent focus:outline-none transition-all cursor-pointer max-w-[200px] truncate"
+                                        >
+                                            {move || {
+                                                state.projects.with(|projs| {
+                                                    projs.iter().map(|p| {
+                                                        let id = p.id.clone();
+                                                        let name = p.name.clone();
+                                                        view! {
+                                                            <option value=id class="bg-white dark:bg-neutral-900 text-slate-900 dark:text-white font-medium">{name}</option>
+                                                        }
+                                                    }).collect_view()
+                                                })
+                                            }}
+                                        </select>
+                                    </div>
+                                </div>
 
                     {/* Actions */}
                     <div class="flex items-center gap-1.5">
@@ -228,5 +272,8 @@ pub fn App() -> impl IntoView {
                 </main>
             </div>
         </div>
+    }.into_any()
+            }
+        }}
     }
 }
