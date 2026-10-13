@@ -67,6 +67,19 @@ Because it operates entirely without a backend API, all state is handled nativel
    - Header project switcher allows instant switching between resumes directly within the editor.
    - Transparent zero-data-loss migration from legacy single-resume `cvapp-storage` to `cvapp-projects`.
 
+10. **CLI & Model Context Protocol (MCP) Server (`crates/cvapp-cli`)**:
+   - Built specifically for autonomous AI agents and terminal workflows.
+   - **CLI Mode**: Inspect, manipulate, ATS-optimize, and export resumes:
+     - `mise run cli -- project list`
+     - `mise run cli -- resume set-profile --name "Jane Doe" --title "Staff Engineer"`
+     - `mise run cli -- ats analyze --job-text "..."` (calculates match % and identifies missing keywords)
+     - `mise run cli -- ats inject Rust Kubernetes WebAssembly`
+     - `mise run cli -- export html -o resume.html`
+   - **MCP Server Mode (`cvapp mcp`)**: Standard JSON-RPC 2.0 stdio transport (spec 2024-11-05).
+     - Configured automatically in `.agents/mcp_config.json`.
+     - Exposes tools to AI agents: `cvapp_list_projects`, `cvapp_get_project`, `cvapp_create_project`, `cvapp_duplicate_project`, `cvapp_update_personal_info`, `cvapp_update_summary`, `cvapp_add_experience`, `cvapp_set_skills`, `cvapp_inject_ats_keywords`, `cvapp_analyze_job_fit`, `cvapp_set_template`, `cvapp_export_resume`, `cvapp_import_linkedin`.
+     - Exposes resources: `cvapp://templates`, `cvapp://projects`, `cvapp://projects/{id}`.
+
 ## Maintenance Commands
 ```bash
 # Using mise (recommended):
@@ -75,12 +88,17 @@ mise run dev            # Start Trunk dev server with hot-reloading (http://loca
 mise run build          # Build release WASM bundle to dist/
 mise run desktop:dev    # Start Tauri desktop app in dev mode
 mise run desktop:build  # Build release desktop installer
-mise run test           # Run Rust unit tests
+mise run test           # Run Rust web unit tests
+mise run cli -- --help  # Run CVapp CLI
+mise run mcp            # Start Model Context Protocol server on stdio
+mise run cli:test       # Run CLI and MCP integration test suite
+mise run cli:build      # Compile release CLI / MCP binary
 
 # Or using cargo / trunk directly:
 trunk serve
 trunk build --release
 cargo test --lib
+cargo test --manifest-path crates/cvapp-cli/Cargo.toml
 cargo tauri build
 ```
 

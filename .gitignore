@@ -46,6 +46,8 @@ next-env.d.ts
 # Rust / Cargo
 /target/
 src-tauri/target/
+crates/**/target/
+scratch/
 
 # Trunk / Tailwind
 /.trunk/
