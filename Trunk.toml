@@ -6,6 +6,15 @@ dist = "dist"
 port = 8080
 open = false
 
+[watch]
+ignore = [
+    "style/tailwind.css",
+    "src-tauri",
+    "dist",
+    "target",
+    "scratch"
+]
+
 [[hooks]]
 stage = "pre_build"
 command = "bunx"
