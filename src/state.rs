@@ -60,7 +60,7 @@ impl AppState {
         Self {
             projects: RwSignal::new(initial_projects),
             active_project_id: RwSignal::new(initial_active_id),
-            is_home_view: RwSignal::new(false),
+            is_home_view: RwSignal::new(true),
             resume_data: RwSignal::new(initial_state.resume_data),
             active_template: RwSignal::new(initial_state.active_template),
             dark_mode: RwSignal::new(initial_state.dark_mode.unwrap_or(sys_dark)),
