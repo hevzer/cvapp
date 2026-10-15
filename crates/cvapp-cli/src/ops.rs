@@ -440,7 +440,7 @@ pub fn analyze_job_fit(project: &CvProject, job_description: &str) -> AtsFitAnal
 
 pub fn set_template(store: &mut ProjectsStore, query: Option<&str>, template_str: &str) -> Result<(), String> {
     let p = find_project_mut(store, query)?;
-    p.data.active_template = TemplateType::from_str(template_str);
+    p.data.active_template = template_str.parse().unwrap_or(TemplateType::Ats);
     p.updated_at = current_timestamp_secs();
     Ok(())
 }

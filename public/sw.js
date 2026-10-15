@@ -1,19 +1,7 @@
-const CACHE_NAME = 'cvapp-cache-v1';
+const CACHE_NAME = 'cvapp-cache-v2';
 
-// Add minimal offline caching
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Just cache the root and manifest on install
-      return cache.addAll([
-        '/',
-        '/manifest.json',
-        '/cvapp_macos_logo.png',
-        '/icon-192x192.png',
-        '/icon-512x512.png'
-      ]).catch(err => console.log('SW Cache error', err));
-    })
-  );
+self.addEventListener('install', () => {
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -26,27 +14,43 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Stale-while-revalidate strategy
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+
+  // Network-first for navigation / HTML documents to avoid stale WASM hash mismatches
+  if (event.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first with network fallback for hashed assets, fonts, icons
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // Only cache GET requests
-        if (event.request.method === 'GET' && networkResponse.status === 200) {
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return networkResponse;
-      }).catch(() => {
-        return cachedResponse;
       });
-      return cachedResponse || fetchPromise;
     })
   );
 });

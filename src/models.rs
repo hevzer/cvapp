@@ -197,13 +197,21 @@ impl TemplateType {
         }
     }
 
-    pub fn from_str(s: &str) -> Self {
+    pub fn from_str_name(s: &str) -> Self {
         match s {
             "modern" => Self::Modern,
             "timeline" => Self::Timeline,
             "timelineTwoColumn" => Self::TimelineTwoColumn,
             _ => Self::Ats,
         }
+    }
+}
+
+impl std::str::FromStr for TemplateType {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self::from_str_name(s))
     }
 }
 

@@ -29,16 +29,12 @@ run = "cargo test --lib"
 description = "Run CVapp CLI command"
 run = "cargo run --manifest-path crates/cvapp-cli/Cargo.toml --bin cvapp --"
 
-[tasks.mcp]
-description = "Start CVapp Model Context Protocol (MCP) server for AI agents"
-run = "cargo run --quiet --manifest-path crates/cvapp-cli/Cargo.toml --bin cvapp -- mcp"
-
 [tasks."cli:build"]
-description = "Build release CVapp CLI / MCP binary"
+description = "Build release CVapp CLI binary"
 run = "cargo build --release --manifest-path crates/cvapp-cli/Cargo.toml"
 
 [tasks."cli:test"]
-description = "Run CVapp CLI / MCP integration and unit tests"
+description = "Run CVapp CLI integration and unit tests"
 run = "cargo test --manifest-path crates/cvapp-cli/Cargo.toml"
 
 [tasks.setup]

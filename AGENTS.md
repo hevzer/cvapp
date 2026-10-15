@@ -67,18 +67,21 @@ Because it operates entirely without a backend API, all state is handled nativel
    - Header project switcher allows instant switching between resumes directly within the editor.
    - Transparent zero-data-loss migration from legacy single-resume `cvapp-storage` to `cvapp-projects`.
 
-10. **CLI & Model Context Protocol (MCP) Server (`crates/cvapp-cli`)**:
-   - Built specifically for autonomous AI agents and terminal workflows.
-   - **CLI Mode**: Inspect, manipulate, ATS-optimize, and export resumes:
+10. **Command Line Interface (CLI) (`crates/cvapp-cli`)**:
+   - Built specifically for autonomous AI agents, script automation, and terminal workflows.
+   - Inspect, manipulate, ATS-optimize, and export resumes:
      - `mise run cli -- project list`
      - `mise run cli -- resume set-profile --name "Jane Doe" --title "Staff Engineer"`
      - `mise run cli -- ats analyze --job-text "..."` (calculates match % and identifies missing keywords)
      - `mise run cli -- ats inject Rust Kubernetes WebAssembly`
      - `mise run cli -- export html -o resume.html`
-   - **MCP Server Mode (`cvapp mcp`)**: Standard JSON-RPC 2.0 stdio transport (spec 2024-11-05).
-     - Configured automatically in `.agents/mcp_config.json`.
-     - Exposes tools to AI agents: `cvapp_list_projects`, `cvapp_get_project`, `cvapp_create_project`, `cvapp_duplicate_project`, `cvapp_update_personal_info`, `cvapp_update_summary`, `cvapp_add_experience`, `cvapp_set_skills`, `cvapp_inject_ats_keywords`, `cvapp_analyze_job_fit`, `cvapp_set_template`, `cvapp_export_resume`, `cvapp_import_linkedin`.
-     - Exposes resources: `cvapp://templates`, `cvapp://projects`, `cvapp://projects/{id}`.
+   - **Live Desktop IPC**: After the CLI writes the projects database, it sends the full project snapshot over a localhost TCP connection (`127.0.0.1:38761`). The Tauri desktop process queues the snapshot and the Leptos app polls it every 250 ms, applies it, and updates local storage. This works without opening a file picker; the CLI remains usable when the desktop app is closed.
+
+11. **Dev & Desktop Rendering Stability Safeguards**:
+   - **Service Worker Guard**: Service Workers are strictly deactivated and purged on `localhost`, `127.0.0.1`, and inside Tauri (`index.html`). Stale-while-revalidate caching of deleted WASM chunks caused fatal 404 instantiation errors and blank white screens.
+   - **Trunk Watch Ignores**: `Trunk.toml` ignores `cvapp-projects.json`, `crates/`, `.cvapp/`, `.git/`, and `target/` so CLI database updates stream smoothly over IPC (250 ms) without triggering full WASM recompiles or page reloads.
+   - **Linux WebKitGTK Stability**: Sets `WEBKIT_DISABLE_DMABUF_RENDERER=1` and `WEBKIT_DISABLE_COMPOSITING_MODE=1` in `src-tauri` to prevent Wayland and Mesa GPU compositing process crashes.
+   - **Reactive View Preservation**: `activate_projects_store` preserves the user's current view (e.g., Projects Dashboard) during background IPC updates, and guards signal assignments with equality checks to eliminate unnecessary DOM churn.
 
 ## Maintenance Commands
 ```bash
@@ -90,9 +93,8 @@ mise run desktop:dev    # Start Tauri desktop app in dev mode
 mise run desktop:build  # Build release desktop installer
 mise run test           # Run Rust web unit tests
 mise run cli -- --help  # Run CVapp CLI
-mise run mcp            # Start Model Context Protocol server on stdio
-mise run cli:test       # Run CLI and MCP integration test suite
-mise run cli:build      # Compile release CLI / MCP binary
+mise run cli:test       # Run CLI integration and unit test suite
+mise run cli:build      # Compile release CLI binary
 
 # Or using cargo / trunk directly:
 trunk serve

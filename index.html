@@ -33,11 +33,38 @@
   </head>
   <body class="font-sans antialiased">
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
-        });
-      }
+      (function() {
+        const isLocal = window.location.hostname === 'localhost' ||
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname === '[::1]' ||
+                        window.location.protocol === 'tauri:' ||
+                        typeof window.__TAURI_INTERNALS__ !== 'undefined' ||
+                        typeof window.__TAURI__ !== 'undefined';
+
+        if (isLocal) {
+          // In local dev and desktop app, unregister any service workers and clear caches
+          // to ensure instant live updates and prevent serving stale WASM or blank pages.
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              for (const reg of regs) {
+                reg.unregister();
+              }
+            }).catch(function() {});
+          }
+          if ('caches' in window) {
+            caches.keys().then(function(keys) {
+              for (const key of keys) {
+                caches.delete(key);
+              }
+            }).catch(function() {});
+          }
+        } else if ('serviceWorker' in navigator) {
+          // In production static web deployments, register PWA service worker
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').catch(function() {});
+          });
+        }
+      })();
     </script>
   </body>
 </html>

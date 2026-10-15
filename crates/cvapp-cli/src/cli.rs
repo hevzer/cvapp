@@ -5,7 +5,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::export::{export_html, export_json, export_markdown, export_text};
-use crate::mcp::run_stdio_server;
 use crate::ops::{
     add_certification, add_education, add_experience, add_technical_skill, analyze_job_fit,
     clear_ats_keywords, create_project, delete_project, duplicate_project, import_linkedin,
@@ -19,8 +18,8 @@ use crate::storage::{find_project, load_store, save_store};
 #[command(
     name = "cvapp",
     version = "0.2.0",
-    about = "CVapp CLI and Model Context Protocol (MCP) Server for AI Agents & Developers",
-    long_about = "A high-performance CLI and MCP tool for inspecting, modifying, ATS-optimizing, and exporting professional CVs and resumes."
+    about = "CVapp CLI for AI Agents & Developers",
+    long_about = "A high-performance CLI tool for inspecting, modifying, ATS-optimizing, and exporting professional CVs and resumes."
 )]
 pub struct Cli {
     /// Custom path to the CVapp database JSON file (.cvapp/projects.json or resume.json)
@@ -37,9 +36,6 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Start the Model Context Protocol (MCP) server over standard I/O for AI agents
-    Mcp,
-
     /// Manage resume projects and profiles
     Project(ProjectArgs),
 
@@ -416,10 +412,6 @@ pub fn run_cli(cli: Cli) -> Result<(), String> {
     let explicit_path = cli.file.as_deref();
 
     match cli.command {
-        Commands::Mcp => {
-            run_stdio_server(cli.file).map_err(|e| format!("MCP Server error: {}", e))?;
-        }
-
         Commands::Project(args) => match args.command {
             ProjectSubcommand::List => {
                 let (_, store) = load_store(explicit_path)?;

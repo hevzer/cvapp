@@ -174,7 +174,7 @@ pub fn export_text(project: &CvProject) -> String {
             for line in exp.description.lines() {
                 let trimmed = line.trim();
                 if !trimmed.is_empty() {
-                    out.push_str(&format!("* {}\n", trimmed.trim_start_matches(|c| c == '-' || c == '*').trim()));
+                    out.push_str(&format!("* {}\n", trimmed.trim_start_matches(['-', '*']).trim()));
                 }
             }
             out.push('\n');

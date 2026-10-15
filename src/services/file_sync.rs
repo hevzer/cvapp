@@ -109,6 +109,25 @@ pub fn is_direct_file_sync_supported() -> bool {
     is_tauri_env() || is_file_system_access_supported()
 }
 
+/// Takes the latest project snapshot pushed by the local CLI process.
+pub async fn take_cli_project_update() -> Result<Option<String>, String> {
+    if !is_tauri_env() {
+        return Ok(None);
+    }
+    let args = js_sys::Object::new();
+    let value = JsFuture::from(js_tauri_invoke("take_cli_project_update", &args.into()))
+        .await
+        .map_err(|error| format!("Could not read CLI update: {error:?}"))?;
+    if value.is_null() || value.is_undefined() {
+        Ok(None)
+    } else {
+        value
+            .as_string()
+            .map(Some)
+            .ok_or_else(|| "CLI update was not a JSON string".to_string())
+    }
+}
+
 pub async fn link_new_file(suggested_name: &str) -> Result<LinkedFile, String> {
     if is_tauri_env() {
         let args_obj = js_sys::Object::new();

@@ -1,5 +1,4 @@
-use cvapp_cli::{export, mcp, ops, storage};
-use serde_json::json;
+use cvapp_cli::{export, ops, storage};
 use std::fs;
 
 #[test]
@@ -68,14 +67,6 @@ fn test_storage_and_ops_lifecycle() {
     storage::save_store(&db_path, &store).unwrap();
     let (_, reloaded) = storage::load_store(Some(&db_path)).unwrap();
     assert_eq!(reloaded.projects.len(), 2);
-
-    // 8. Test MCP tools directly
-    let ctx = mcp::handlers::McpContext::new(Some(db_path.clone()));
-    let list_json = mcp::handlers::handle_tool_call(&ctx, "cvapp_list_projects", &json!({})).unwrap();
-    assert!(list_json.contains("Jane Doe"));
-
-    let get_json = mcp::handlers::handle_tool_call(&ctx, "cvapp_get_project", &json!({ "project_id": new_id })).unwrap();
-    assert!(get_json.contains("Staff Distributed Systems Engineer"));
 
     // Cleanup
     let _ = fs::remove_dir_all(&temp_dir);

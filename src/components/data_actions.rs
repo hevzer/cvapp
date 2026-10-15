@@ -4,8 +4,8 @@ use crate::services::file_sync::{
 };
 use crate::state::{AppState, SyncStatus};
 use leptos::prelude::*;
-use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::closure::Closure;
 use web_sys::{Blob, FileReader, HtmlAnchorElement, HtmlInputElement, Url};
 
 #[component]
@@ -236,4 +236,3 @@ pub fn DataActions() -> impl IntoView {
         </div>
     }
 }
-

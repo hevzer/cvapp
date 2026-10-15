@@ -2,11 +2,11 @@ use crate::components::about_modal::AboutModal;
 use crate::components::home::project_card::ProjectCard;
 use crate::components::linkedin_modal::LinkedInModal;
 use crate::components::ui::dark_mode_toggle::DarkModeToggle;
-use crate::models::{CvProject, PersistedState, ResumeData};
+use crate::models::{CvProject, PersistedState, ProjectsStore, ResumeData};
 use crate::state::AppState;
 use leptos::prelude::*;
-use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::closure::Closure;
 use web_sys::{FileReader, HtmlInputElement};
 
 #[component]
@@ -87,13 +87,26 @@ pub fn ProjectsHome() -> impl IntoView {
                 let onload = Closure::wrap(Box::new(move |_: web_sys::Event| {
                     if let Ok(res) = reader_clone.result() {
                         if let Some(content) = res.as_string() {
-                            // Try parsing as full CvProject, PersistedState, or ResumeData
-                            if let Ok(full_proj) = serde_json::from_str::<CvProject>(&content) {
-                                state.projects.update(|p| p.insert(0, full_proj.clone()));
-                                state.open_project(&full_proj.id);
-                            } else if let Ok(state_data) = serde_json::from_str::<PersistedState>(&content) {
+                            // Try parsing a CLI project database, full project, or resume data.
+                            if let Ok(project_store) =
+                                serde_json::from_str::<ProjectsStore>(&content)
+                            {
+                                let _ = state.import_projects_store(project_store);
+                            } else if let Ok(full_proj) =
+                                serde_json::from_str::<CvProject>(&content)
+                            {
+                                let project_id = full_proj.id.clone();
+                                let _ = state.import_projects_store(ProjectsStore {
+                                    active_project_id: Some(project_id),
+                                    projects: vec![full_proj],
+                                });
+                            } else if let Ok(state_data) =
+                                serde_json::from_str::<PersistedState>(&content)
+                            {
                                 state.create_new_project(&project_name, Some(state_data));
-                            } else if let Ok(resume_data) = serde_json::from_str::<ResumeData>(&content) {
+                            } else if let Ok(resume_data) =
+                                serde_json::from_str::<ResumeData>(&content)
+                            {
                                 let mut s = PersistedState::default();
                                 s.resume_data = resume_data;
                                 state.create_new_project(&project_name, Some(s));
@@ -131,7 +144,6 @@ pub fn ProjectsHome() -> impl IntoView {
 
     let active_id = move || state.active_project_id.get();
     let has_active = move || active_id().is_some();
-
     view! {
         <div class="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white flex flex-col">
             {/* Top Navigation Bar */}

@@ -10,9 +10,15 @@ open = false
 ignore = [
     "style/tailwind.css",
     "src-tauri",
+    "crates",
     "dist",
     "target",
-    "scratch"
+    "scratch",
+    "cvapp-projects.json",
+    ".cvapp",
+    ".git",
+    "*.json",
+    "*.md"
 ]
 
 [[hooks]]

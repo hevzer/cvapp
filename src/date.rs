@@ -27,7 +27,7 @@ pub fn format_date_localized(date: &str, lang: &str) -> String {
     let month = parts[1];
 
     let m_num = month.parse::<usize>().unwrap_or(0);
-    if m_num >= 1 && m_num <= 12 {
+    if (1..=12).contains(&m_num) {
         let is_fr = lang.to_lowercase() == "fr";
         let months_en = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",

@@ -127,7 +127,7 @@ pub fn App() -> impl IntoView {
                                             prop:value=move || state.active_project_id.get().unwrap_or_default()
                                             on:change=move |ev| {
                                                 let id = event_target_value(&ev);
-                                                if !id.is_empty() {
+                                                if !id.is_empty() && state.active_project_id.get_untracked().as_deref() != Some(&id) {
                                                     state.open_project(&id);
                                                 }
                                             }

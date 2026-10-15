@@ -49,6 +49,10 @@ src-tauri/target/
 crates/**/target/
 scratch/
 
+# Local databases
+cvapp-projects.json
+.cvapp/
+
 # Trunk / Tailwind
 /.trunk/
 /style/

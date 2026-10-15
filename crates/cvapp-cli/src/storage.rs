@@ -3,7 +3,12 @@ use cvapp::models::{CvProject, PersistedState, ProjectsStore, TemplateType};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
+use std::io::{Read, Write};
+use std::net::{SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
+use std::time::Duration;
+
+const APP_IPC_ADDR: &str = "127.0.0.1:38761";
 
 #[derive(Serialize, Deserialize)]
 struct LegacyZustandWrapper {
@@ -17,10 +22,10 @@ pub fn resolve_store_path(explicit_path: Option<&Path>) -> PathBuf {
         return p.to_path_buf();
     }
 
-    if let Ok(env_path) = env::var("CVAPP_FILE") {
-        if !env_path.trim().is_empty() {
-            return PathBuf::from(env_path.trim());
-        }
+    if let Ok(env_path) = env::var("CVAPP_FILE")
+        && !env_path.trim().is_empty()
+    {
+        return PathBuf::from(env_path.trim());
     }
 
     // Check current directory and parents for .cvapp/projects.json or cvapp-projects.json
@@ -142,7 +147,37 @@ pub fn save_store(path: &Path, store: &ProjectsStore) -> Result<(), String> {
     }
 
     let json = serde_json::to_string_pretty(store).map_err(|e| e.to_string())?;
-    fs::write(path, json).map_err(|e| format!("Failed to write store to {}: {}", path.display(), e))
+    fs::write(path, json).map_err(|e| format!("Failed to write store to {}: {}", path.display(), e))?;
+    if notify_running_app(store) {
+        eprintln!("Sent changes to the running CVapp desktop app.");
+    }
+    Ok(())
+}
+
+/// Best-effort push to a locally running Tauri desktop app. The CLI remains
+/// usable when the app is closed; when it is open, the app applies this store
+/// immediately through its localhost IPC listener.
+fn notify_running_app(store: &ProjectsStore) -> bool {
+    let Ok(addr) = APP_IPC_ADDR.parse::<SocketAddr>() else {
+        return false;
+    };
+    let Ok(mut stream) = TcpStream::connect_timeout(&addr, Duration::from_millis(150)) else {
+        return false;
+    };
+    let _ = stream.set_read_timeout(Some(Duration::from_millis(250)));
+    let _ = stream.set_write_timeout(Some(Duration::from_millis(250)));
+
+    if serde_json::to_writer(&mut stream, store).is_err()
+        || stream.write_all(b"\n").is_err()
+        || stream.flush().is_err()
+    {
+        return false;
+    }
+
+    // The acknowledgement is informational; a missing response must not make
+    // an otherwise successful CLI database update fail.
+    let mut ack = [0_u8; 3];
+    matches!(stream.read_exact(&mut ack), Ok(()) if &ack == b"OK\n")
 }
 
 /// Finds a project by ID or case-insensitive name match.
@@ -176,10 +211,10 @@ pub fn find_project<'a>(store: &'a ProjectsStore, query: Option<&str>) -> Result
             Err(format!("Project '{}' not found. Available projects: {}", q, store.projects.iter().map(|p| p.name.as_str()).collect::<Vec<_>>().join(", ")))
         }
         None => {
-            if let Some(ref active_id) = store.active_project_id {
-                if let Some(p) = store.projects.iter().find(|p| p.id == *active_id) {
-                    return Ok(p);
-                }
+            if let Some(ref active_id) = store.active_project_id
+                && let Some(p) = store.projects.iter().find(|p| p.id == *active_id)
+            {
+                return Ok(p);
             }
             store.projects.first().ok_or_else(|| "No projects found.".to_string())
         }
@@ -202,6 +237,8 @@ pub fn find_project_mut<'a>(store: &'a mut ProjectsStore, query: Option<&str>) -
             } else {
                 let q_lower = q_trimmed.to_lowercase();
                 if let Some(p) = store.projects.iter().find(|p| p.name.to_lowercase() == q_lower) {
+                    p.id.clone()
+                } else if let Some(p) = store.projects.iter().find(|p| p.name.to_lowercase().contains(&q_lower)) {
                     p.id.clone()
                 } else if let Some(p) = store.projects.iter().find(|p| p.candidate_name().to_lowercase().contains(&q_lower)) {
                     p.id.clone()
